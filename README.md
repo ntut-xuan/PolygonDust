@@ -73,7 +73,7 @@ In this project, we will split into three part:
 
 The Numerical process flow should be like this:
 
-![image-20240909022525138](/Users/xuan/Library/Application Support/typora-user-images/image-20240909022525138.png)
+![image-20240909022525138](https://media.discordapp.net/attachments/950048467294760990/1282414951419482163/image.png?ex=66df457e&is=66ddf3fe&hm=2fa92a3384cd4d6dd27e75ef0eecc849422480432389fe679ac26a82362d01e2&=&format=webp&quality=lossless&width=1100&height=418)
 
 
 
