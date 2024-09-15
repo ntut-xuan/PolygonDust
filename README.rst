@@ -135,58 +135,58 @@ can develop properly.
 Schedule
 --------
 
-+---+-------------------------------------------------------+----------+
-| W | Task                                                  | Progress |
-| e |                                                       | (%)      |
-| e |                                                       |          |
-| k |                                                       |          |
-+===+=======================================================+==========+
-| 1 | System Design / Writing proposal                      | 0%       |
-|   |                                                       | (0/26)   |
-+---+-------------------------------------------------------+----------+
-| 2 | Create GitHub Project, trying to figure how to        | 0%       |
-|   | process image on C++, and how to process command line | (0/26)   |
-|   | interface on C++                                      |          |
-+---+-------------------------------------------------------+----------+
-| 3 | Implement CLI                                         | 8%       |
-|   |                                                       | (02/26)  |
-+---+-------------------------------------------------------+----------+
-| 4 | Implement CLI and doing ``Pybind11`` to bind “shell”  | 23%      |
-|   | classes.                                              | (06/26)  |
-+---+-------------------------------------------------------+----------+
-| 5 | Implement the calculation feature of ``GaussianBlur`` | 23%      |
-|   | class.                                                | (06/26)  |
-+---+-------------------------------------------------------+----------+
-| 6 | Implement the calculation feature of ``GaussianBlur`` | 23%      |
-|   | class.                                                | (06/26)  |
-+---+-------------------------------------------------------+----------+
-| 7 | Implement the calculation feature of ``GaussianBlur`` | 50%      |
-|   | class.                                                | (13/26)  |
-+---+-------------------------------------------------------+----------+
-| 8 | Implement the calculation feature of ``OtsuMethod``   | 50%      |
-|   | class.                                                | (13/26)  |
-+---+-------------------------------------------------------+----------+
-| 9 | Implement the calculation feature of ``OtsuMethod``   | 50%      |
-|   | class.                                                | (13/26)  |
-+---+-------------------------------------------------------+----------+
-| 1 | Implement the calculation feature of ``OtsuMethod``   | 77%      |
-| 0 | class.                                                | (20/26)  |
-+---+-------------------------------------------------------+----------+
-| 1 | Check ``GaussianBlur`` and ``OtsuMethod`` is work     | 77%      |
-| 1 | property.                                             | (20/26)  |
-+---+-------------------------------------------------------+----------+
-| 1 | Implement shred feature.                              | 77%      |
-| 2 |                                                       | (20/26)  |
-+---+-------------------------------------------------------+----------+
-| 1 | Implement shred feature.                              | 88%      |
-| 3 |                                                       | (23/26)  |
-+---+-------------------------------------------------------+----------+
-| 1 | Implement voting feature.                             | 88%      |
-| 4 |                                                       | (23/26)  |
-+---+-------------------------------------------------------+----------+
-| 1 | Implement voting feature.                             | 100%     |
-| 5 |                                                       | (26/26)  |
-+---+-------------------------------------------------------+----------+
-| 1 | Winding up.                                           | 100%     |
-| 6 |                                                       | (26/26)  |
-+---+-------------------------------------------------------+----------+
+.. list-table:: Title
+   :widths: 25 25 50
+   :header-rows: 1
+
+ * - Week
+   - Task 
+   - Progress (%)
+ * - 1
+   - System Design / Writing proposal
+   - 0% (00/26)
+ * - 2
+   - Create GitHub Project, trying to figure how to process image on C++, and how to process command line interface on C++
+   - 0% (00/26)
+ * - 3
+   - Implement CLI
+   - 8% (02/26)
+ * - 4
+   - Implement CLI and doing `Pybind11` to bind "shell" classes.
+   - 23% (06/26)
+ * - 5
+   - Implement the calculation feature of `GaussianBlur` class.
+   - 23% (06/26)
+ * - 6
+   - Implement the calculation feature of `GaussianBlur` class.
+   - 23% (06/26)
+ * - 7
+   - Implement the calculation feature of `GaussianBlur` class.
+   - 23% (06/26)
+ * - 8
+   - Implement the calculation feature of `OtsuMethod` class.
+   - 50% (13/26)
+ * - 9
+   - Implement the calculation feature of `OtsuMethod` class.
+   - 50% (13/26)
+ * - 10
+   - Implement the calculation feature of `OtsuMethod` class.
+   - 77% (20/26)
+ * - 11
+   - Check `GaussianBlur` and `OtsuMethod` is work property.
+   - 77% (20/26)
+ * - 12
+   - Implement shred feature.
+   - 77% (20/26)
+ * - 13
+   - Implement shred feature.
+   - 88% (23/26)
+ * - 14
+   - Implement voting feature.
+   - 88% (23/26)
+ * - 15
+   - Implement voting feature.
+   - 100% (26/26)
+ * - 16
+   - Winding up.
+   - 100% (26/26)
