@@ -2,114 +2,103 @@
 
 ## Description
 
-PolygonDust is an application to measure the area size of polygon, or execute bitwise operator on two or more polygon.
+PolygonDust is an application to measure the area size of polygon.
 
-PolygonDust expect to support images like PNG/JPG. Split the image to lot of square, and determine the area of polygon by how many square is not white. Moreover, by the square can record the specific area is the part of shape or not, we can doing some bitwise opearation on square status and make a bitwise-operated images.
+"Dust" means we trying to shred the image into lot of pieces and measure polygon size by these pieces.
+
+![](https://media.discordapp.net/attachments/950048467294760990/1284862080050135071/image.png?ex=66e82c8f&is=66e6db0f&hm=8f52c071f46be06d7d6d014e8551087f495e2cf1332a784079c4805429e7aea3&=&format=webp&quality=lossless&width=2880&height=848)
 
 
 
 ## Problem to Solve 
 
-PolygonDust is used to solve the shape union/difference by pixel-way. We use image process instead of formula to describe the shape, but it may easier to solve the problem.
+In size measurement of ploygon, we have two methods can do it.
+
+- Pixel-Method: Shred the image to lot of rectangles and calculate the size by these rectangles.
+- Formula-Method: Calculate the polygon by formula. e.g. $W \times H$ for rectangle of $r^2 \times \pi$ for circle.
 
 
 
-The benefit of solve shape union/difference by pixel-way:
-
-- Straightful and union way to find out the size of shapes union/difference.
-- Easy to output the result images (without lot of equation and need to visualize the shape draw by equation).
-- Easy to process the images. Python package can process the image easily.
+PolygonDust is used to solve size calculation by Pixel-Method. In polygon description, we use image instead formula, that may make the problem more easier to solve.
 
 
 
-The disadventage of solve shape union/difference by pixel-way:
+Expect the process steps should be:
 
-- Have **more** error rate than equation-way.
-- Affected by the image resolution.
-
-
-
-In this project, we are focus on "how numerical software can solve this problem" and "Trying to make a nice application with these result which process by numerical software". 
-
-The numerical software may solve the image processing with these steps:
-
-- [Gaussian Blur](https://zh.wikipedia.org/zh-tw/%E9%AB%98%E6%96%AF%E6%A8%A1%E7%B3%8A) to decrease the noice.
+- [Gaussian Blur](https://zh.wikipedia.org/zh-tw/%E9%AB%98%E6%96%AF%E6%A8%A1%E7%B3%8A) to decrease the image noice.
 - Binarization: We trying to use [Otsu's method](https://zh.wikipedia.org/wiki/%E5%A4%A7%E6%B4%A5%E7%AE%97%E6%B3%95), it calculate the threadhold globally, and may have more efficiency to process binarization.
-- Cut the image to lot of piece
+- Shred the image to lot of piece
 - Process these piece by determine the piece is fill/not fill, and vote 0/1.
-- By the result of voting, calculate the area of image, or process bitwise operation on these images.
+- By the result of voting, calculate the area of ploygon.
+
+
+
+The gaussian blur should implement matrix calculation and Otsu's methods should implement K-means algorithm to solve the problem. We will implement numerical process in C/C++ to keep its efficientcy.
 
 
 
 ## Prospective Users
 
-The user should know how to use command-line interface. Which a communication way to process PolygonDust. In PolygonDust, we *try out best* to make  or command easy to know, and provide a nice log to show the process or result.
+Since Fomula-Method to describe the polygon may have some obstacle on size calculation but have more accurate on measurement, this application may help formula-method to get the size approximately by Pixel-Method and doing cross-validation.
+
+The user of this application can input the image by CLI (command-line interface), and got the image size by application output.
 
 
 
-## System Architecture / API Description
+## System Architecture
 
-*Since I still don't know what the proper way to communicate between Python and C++, I'll trying to use command-line process the flow. But It will be good to know more proper way to optimize the flow.*
+In this software, we trying to implement numerical process in C/C++. We would like to use `pybind11` to convert C++ library into python module.
 
-In this project, we will split into three part:
+We expect in C/C++, we have two classese `GaussianBlur` and `OtsuMethod` working on image process, and Python library can pass image bytes buffer to these classes and got the byte buffer of processed image as result.
 
-- Processor 1: Gaussian Blur utility. 
-  - It can input the image with command line to execute the utility and output the result. Write in C++.
-  - Example: `pd-gb -i polygon.png -o polygon-gb.png`
-- Processor 2: Otsu's method utility. 
-  - It can input the image with command line to execute the utility and output the result. Write in C++.
-  - Example: `pd-om -i polygon-gb.png -o polygon-gb-om.png`
-- Processor 3: Controller. 
-  - Trying to execute the utility in Python, cut the image into pieces, handling vote for pieces, and output the result.
-  - The User should process the numerical software by this controller, but we are not rule out the user execute the utility if they need it.
-  - Example: `./polygonDust -i polygon1.png --xor -i polygon2.png --and -i polygon3.png -o polygon-result.png --particles 5`
-    - We input `polygon1.png` as a first images
-    - We input `polygon2.png` as a second image and should do XOR operator with first image.
-    - We input `polygon3.png` as a third image and should do AND operator with pervious result.
-    - We output result to `polygon-result.png`
-    - The particles is `5px` for images, means it should split the images into lot of 5x5 square
+As we got the byte buffer of processed image, we can transfer it into images and process shredding and voting.
 
 
 
-The Numerical process flow should be like this:
+## API Description
 
-![image-20240909022525138](https://media.discordapp.net/attachments/950048467294760990/1282414951419482163/image.png?ex=66df457e&is=66ddf3fe&hm=2fa92a3384cd4d6dd27e75ef0eecc849422480432389fe679ac26a82362d01e2&=&format=webp&quality=lossless&width=1100&height=418)
+Since having `GaussianBlur` and `OtsuMethod` class in C++, it should have constructor and destructor, which can passed the image byte buffer into constructor and release the dynamic resource (if any) in destructor. These class should have some customize parameter to determine the particles, e.g. may passed $\sigma$ in `GaussianBlur` to determine Gaussian filter kernel and threshold $t$ in `OtsuMethod`.
+
+Moreover, we may provide some function on `GaussianBlur` and `OtsuMethod` to validate these classes is work correctly. For example, may having `GetGaussianFilterKernel` in `GaussianBlur` and it should return the matrix of Gaussian filter kernel. With these function, we can validate our `GaussianBlur` work correctly.
+
+
+
+## Pending Task
+
+- [2] Properly Command-line Interface to input image and got size of shred pieces.
+
+  e.g. `./polygondust --input image.png --particles 5` means input `image.png` and size of rectangle should be 5x5.
+
+- `Pybind11` for convert the C/C++ class into python methods.
+
+  - [2] Working on `GaussianBlur` class and make sure we can reach all public function in this class in Python script.
+  - [2] Working on `OtsuMethod` class and make sure we can reach all public function in this class in Python script.
+
+- Implement the feature on `GaussianBlur` and `OtsuMethod` class
+
+  - [7] Working on `GaussianBlur` class and trying to validate the `GaussianBlur` working properly.
+  - [7] Working on `OtsuMethod` class and trying to validate the `OtsuMethod` working properly.
+
+- [3] Implement the shred feature on Python script.
+
+- [3] Implement voting feature on Python script.
+
+
+
+`[X]` Means the weight of the task, it used to measure the task progress.
 
 
 
 ## Engineering Infrastructure
 
-I list a few engineering infrastructure, but it may change if we need.
+In this project, we have these infrastructure to make sure our project can develop properly.
 
-- For easy to develop, easy to add dependency, and easy to make error message more straighful, we will use CMake to build or project.
-- We use git to do some version control, and push our source code to GitHub. The project is open source with MIT license.
-- We use GitHub Action to check the project can build property in every commit.
-- Write some test with gtest if we need it, and it may using `valgrind` to track memory leak or using `gcovr` to know the test coverage.
-- A Good `README.md` to know how to install this project and how to use this project.
-
-We also trying to obey OOP principle to optimize our code quality >:)
-
-
-
-## Feature Request
-
-Split into three part.
-
-- Worker `PD-GB`
-  - Have a command-line interface to input the data.
-  - Output the result image.
-  - It should do Gaussing Blur in this worker.
-- Worker `PD-OM`
-  - Have a command-line interface to input the data.
-  - Output the result image.
-  - It should do Otsu's method in this worker.
-- Controller
-  - Have a command-line interface to input the data.
-  - Can execute the worker to do calculation.
-  - Can shred the image into lot of pieces.
-  - Can handle voting for these pieces.
-  - Can create bitwise-operation and output desired polygon.
-  - Can output the area information of polygon.
+- Version Control: Git to maintaince the version control and GitHub to handle the repository.
+- Build Tools (Package Tools): CMake for C/C++.
+- Testing framework: GoogleTest for C/C++ and Pytest for Python.
+- The classes and function have its unit test.
+- Coverage Supervise Tools: Codecov to supervise our testing coverage in these test cases.
+- Documentation: Nice `README.md`
 
 
 
@@ -117,19 +106,22 @@ Split into three part.
 
 | Week |                             Task                             | Progress (%) |
 | :--: | :----------------------------------------------------------: | :----------: |
-|  1   |               System Design / Writing proposal               |  0% (0/12)   |
-|  2   | Create GitHub Project, trying to figure how to process image on C++, and how to process command line interface on C++. |  0% (0/12)   |
-|  3   | Trying to complete the "shell" of PD-GB and PD-OM. We complete the command line interface but not implement the calculation feature. | 17% (02/12)  |
-|  4   |    Trying to implement the calculation feature of PD-GB.     | 17% (02/12)  |
-|  5   |    Trying to implement the calculation feature of PD-GB.     | 33% (04/12)  |
-|  6   |    Trying to implement the calculation feature of PD-OM.     | 33% (04/12)  |
-|  7   |    Trying to implement the calculation feature of PD-OM.     | 50% (06/12)  |
-|  8   |            Check PD-GB and PD-OM is work property            | 50% (06/12)  |
-|  9   |         Trying to implement the shell of controller.         | 58% (07/12)  |
-|  10  | Trying to implement the execution phase of controller to execute the worker. | 67% (08/12)  |
-|  11  | Implement shred feature to split the image with specific size of square. | 75% (09/12)  |
-|  12  |   Trying to implement the voting feature of these squares.   | 83% (10/12)  |
-|  13  | Trying to implement bitwise-operation and output desired image. | 92% (11/12)  |
-|  14  | Trying to output desired image based on the result of bitwise-operation. | 100% (12/12) |
-|  15  | Everything work! The future task will be optimize the software by parallel or some trick if time allow. |   300%​ :)    |
+|  1   |               System Design / Writing proposal               |  0% (0/26)   |
+|  2   | Create GitHub Project, trying to figure how to process image on C++, and how to process command line interface on C++ |  0% (0/26)   |
+|  3   |                        Implement CLI                         |  8% (02/26)  |
+|  4   | Implement CLI and doing `Pybind11` to bind "shell" classes.  | 23% (06/26)  |
+|  5   |  Implement the calculation feature of `GaussianBlur` class.  | 23% (06/26)  |
+|  6   |  Implement the calculation feature of `GaussianBlur` class.  | 23% (06/26)  |
+|  7   |  Implement the calculation feature of `GaussianBlur` class.  | 50% (13/26)  |
+|  8   |   Implement the calculation feature of `OtsuMethod` class.   | 50% (13/26)  |
+|  9   |   Implement the calculation feature of `OtsuMethod` class.   | 50% (13/26)  |
+|  10  |   Implement the calculation feature of `OtsuMethod` class.   | 77% (20/26)  |
+|  11  |   Check `GaussianBlur` and `OtsuMethod` is work property.    | 77% (20/26)  |
+|  12  |                   Implement shred feature.                   | 77% (20/26)  |
+|  13  |                   Implement shred feature.                   | 88% (23/26)  |
+|  14  |                  Implement voting feature.                   | 88% (23/26)  |
+|  15  |                  Implement voting feature.                   | 100% (26/26) |
+|  16  |                         Winding up.                          | 100% (26/26) |
+
+
 
