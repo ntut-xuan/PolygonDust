@@ -12,5 +12,5 @@ polygon size by these pieces.
 ## Usage
 
 ```
-python3 ./src/main.py
+python3 ./polygondust/main.py
 ```
