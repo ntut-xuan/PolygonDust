@@ -7,7 +7,7 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(PolygonDust, m){
     m.doc() = R"pbdoc(
-        Pybind11 example plugin
+        PolygonDust
         -----------------------
 
         .. currentmodule:: PolygonDust
@@ -15,11 +15,11 @@ PYBIND11_MODULE(PolygonDust, m){
         .. autosummary::
            :toctree: _generate
 
-           add
-           subtract
+           Polygon
     )pbdoc";
 
     py::class_<Polygon>(m, "Polygon")
         .def(py::init())
-        .def("GetArea", &Polygon::GetArea);
+        .def("GetArea", &Polygon::GetArea, "Get the area of polygon")
+        .doc() = "A Polygon class for create a polygon";
 }

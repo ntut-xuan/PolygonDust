@@ -1,6 +1,7 @@
 from __future__ import print_function
 from argparse import ArgumentParser, Namespace
 
+import PolygonDust
 
 def initialize_argument_parser() -> ArgumentParser:
     parser: ArgumentParser = ArgumentParser()
@@ -12,6 +13,8 @@ def initialize_argument_parser() -> ArgumentParser:
 def main():
     parser: ArgumentParser = initialize_argument_parser()
     args: Namespace = parser.parse_args()
+
+    print(PolygonDust.Polygon().GetArea())
 
     if args.input is None:
         print("Error: You need to input image file.")
