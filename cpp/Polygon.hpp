@@ -5,6 +5,7 @@ class Polygon {
 public:
     Polygon() = default;
     ~Polygon() = default;
+    int GetArea();
 };
 
 #endif
