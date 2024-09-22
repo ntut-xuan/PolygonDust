@@ -1,4 +1,4 @@
 #!/bin/bash
 
-pip install .
+pip install . -v
 pybind11-stubgen PolygonDust -o .

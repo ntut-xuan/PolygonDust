@@ -14,8 +14,6 @@ def main():
     parser: ArgumentParser = initialize_argument_parser()
     args: Namespace = parser.parse_args()
 
-    print(PolygonDust.Polygon().GetArea())
-
     if args.input is None:
         print("Error: You need to input image file.")
         parser.print_help()

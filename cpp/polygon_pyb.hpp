@@ -5,19 +5,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(PolygonDust, m){
-    m.doc() = R"pbdoc(
-        PolygonDust
-        -----------------------
-
-        .. currentmodule:: PolygonDust
-
-        .. autosummary::
-           :toctree: _generate
-
-           Polygon
-    )pbdoc";
-
+inline void BindPolygonClass(::pybind11::module_ &m){
     py::class_<Polygon>(m, "Polygon")
         .def(py::init())
         .def("GetArea", &Polygon::GetArea, "Get the area of polygon")
