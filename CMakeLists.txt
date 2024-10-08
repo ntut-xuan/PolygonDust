@@ -31,6 +31,8 @@ set(BINDINGS
 
 set(TESTS
     tests/cpp/ut_point.cpp
+    tests/cpp/ut_polygon.cpp
+    tests/cpp/ut_utility.cpp
 )
 
 add_library(PolygonDust MODULE "${SOURCES}" "${BINDINGS}")
@@ -42,7 +44,7 @@ set_target_properties(PolygonDust PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
 
 enable_testing()
 add_executable(PolygonDust-gtest "${SOURCES}" "${TESTS}")
-target_link_libraries(PolygonDust-gtest PUBLIC GTest::gtest_main)
+target_link_libraries(PolygonDust-gtest PUBLIC GTest::gtest_main pybind11::module)
 set_target_properties(PolygonDust-gtest
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"

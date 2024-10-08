@@ -12,6 +12,7 @@
     
 """
 from __future__ import annotations
+import typing
 __all__ = ['Point', 'Polygon']
 class Point:
     """
@@ -41,5 +42,13 @@ class Polygon:
         """
         Get the area of polygon
         """
+    def GetVertexs(self) -> list[Point]:
+        """
+        Get the vertexs of polygon
+        """
+    @typing.overload
     def __init__(self) -> None:
+        ...
+    @typing.overload
+    def __init__(self, arg0: list) -> None:
         ...

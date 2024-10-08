@@ -1,0 +1,8 @@
+# First Square vertices
+v 0.0 0.0 0.0
+v 0.0 3.0 0.0
+v 3.0 3.0 0.0
+v 3.0 0.0 0.0
+
+# Face (the square)
+f 1 2 3 4
