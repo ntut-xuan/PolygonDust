@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - ci-setup
+      - fix-ub
 
 jobs:
   build-and-run:
