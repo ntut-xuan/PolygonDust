@@ -1,7 +1,9 @@
 #include "polygon.hpp"
 #include "point.hpp"
+#include <algorithm>
 #include <cmath>
 #include <vector>
+#include <map>
 
 #include "utility.hpp"
 
@@ -22,7 +24,7 @@ std::vector<Point> Polygon::GetVertexs(){
     return this->vertexs;
 }
 
-std::set<Point> Polygon::GetBoundaryCell(double cellGap){
+std::vector<Point> Polygon::GetBoundaryCell(double cellGap){
     std::set<Point> boundaryCell;
 
     for(int index = 0; index < (int) this->vertexs.size(); index++){
@@ -37,15 +39,19 @@ std::set<Point> Polygon::GetBoundaryCell(double cellGap){
         double currentY = firstVertex.GetY();
 
         for(int i = 0; i < distance / cellGap; i++){
-            Point cell(std::floor((currentX) / cellGap) * cellGap, std::floor((currentY) / cellGap) * cellGap);
-
-            boundaryCell.insert(cell);
+            double floorX = std::floor((currentX) / cellGap) * cellGap;
+            double floorY = std::floor((currentY) / cellGap) * cellGap;
+            std::pair<double, double> p(floorX, floorY);
+            
+            boundaryCell.insert(Point(floorX, floorY));
 
             currentX += unitVectorX * cellGap;
             currentY += unitVectorY * cellGap;
         }
     }
 
-    return boundaryCell;
+    // std::sort(boundaryCell.begin(), boundaryCell.end());
+   
+    return std::vector<Point>(boundaryCell.begin(), boundaryCell.end());
 }
 

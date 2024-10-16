@@ -16,7 +16,7 @@ public:
     }
     ~Polygon() = default;
     std::vector<Point> GetVertexs();
-    std::set<Point> GetBoundaryCell(double cellGap);
+    std::vector<Point> GetBoundaryCell(double cellGap);
     double GetArea();
 };
 

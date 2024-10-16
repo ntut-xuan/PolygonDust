@@ -17,7 +17,7 @@ TEST(POLYGON_TEST, test_get_boundary_with_square_polygon_should_return_correct_b
     std::vector<Point> vertexs = {Point(0, 0), Point(3, 0), Point(3, 3), Point(0, 3)};
     Polygon polygon(vertexs);
 
-    std::set<Point> boundaryCell = polygon.GetBoundaryCell(1);
+    std::vector<Point> boundaryCell = polygon.GetBoundaryCell(1);
 
     std::set<Point> expectedCell = {
         Point(0, 0), Point(1, 0), Point(2, 0), 
@@ -25,7 +25,7 @@ TEST(POLYGON_TEST, test_get_boundary_with_square_polygon_should_return_correct_b
         Point(3, 3), Point(2, 3), Point(1, 3), 
         Point(0, 3), Point(0, 2), Point(0, 1)
     };
-    ASSERT_EQ(boundaryCell, expectedCell);
+    ASSERT_EQ(boundaryCell, std::vector<Point>(expectedCell.begin(), expectedCell.end()));
 }
 
 TEST(POLYGON_TEST, test_get_boundary_with_inregular_polygon_should_return_correct_boundary_points){
@@ -36,7 +36,7 @@ TEST(POLYGON_TEST, test_get_boundary_with_inregular_polygon_should_return_correc
     };
     Polygon polygon(vertexs);
 
-    std::set<Point> boundaryCell = polygon.GetBoundaryCell(1);
+    std::vector<Point> boundaryCell = polygon.GetBoundaryCell(1);
 
     std::set<Point> expectedCell = {
         Point(0, 0), Point(0, 1), Point(1, 2), Point(1, 3), Point(2, 4),
@@ -48,7 +48,8 @@ TEST(POLYGON_TEST, test_get_boundary_with_inregular_polygon_should_return_correc
         Point(3, 1), Point(2, 1), Point(2, 2),
         Point(1, 1), Point(0, 0),
     };
-    ASSERT_EQ(boundaryCell, expectedCell);
+    ASSERT_EQ(expectedCell.size(), 22);
+    ASSERT_EQ(boundaryCell, std::vector<Point>(expectedCell.begin(), expectedCell.end()));
 }
 
 

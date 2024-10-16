@@ -33,10 +33,9 @@ def main():
     scene.parse()
 
     polygon = Polygon([Point(int(vertice[0]), int(vertice[1])) for vertice in scene.vertices])
-    vertexs = polygon.GetVertexs()
+    boundary_cell: set[Point] = polygon.GetBoundaryCell(float(args.particles))
 
-    for vertex in vertexs:
-        print(vertex.GetX(), vertex.GetY())
+    print([(p.GetX(), p.GetY()) for p in boundary_cell])
 
 
 if __name__ == "__main__":
