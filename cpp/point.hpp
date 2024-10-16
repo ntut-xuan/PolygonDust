@@ -3,10 +3,11 @@
 
 class Point {
 private:
-    int x = 0;
-    int y = 0;
+    double x = 0;
+    double y = 0;
 public:
     Point(int x, int y);
+    Point(double x, double y) : x(x), y(y) {}
     ~Point() = default;
     bool operator==(const Point &p2) const{
         return this->x == p2.x && this->y == p2.y;

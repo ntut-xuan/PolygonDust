@@ -8,6 +8,7 @@
 class Polygon {
 private:
     std::vector<Point> vertexs;
+    std::vector<Point> GetErosionPoints();
 public:
     Polygon() = default;
     Polygon(std::vector<Point> vertexs){

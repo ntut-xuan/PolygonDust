@@ -48,3 +48,4 @@ std::set<Point> Polygon::GetBoundaryCell(double cellGap){
 
     return boundaryCell;
 }
+

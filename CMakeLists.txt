@@ -33,6 +33,7 @@ set(TESTS
     tests/cpp/ut_point.cpp
     tests/cpp/ut_polygon.cpp
     tests/cpp/ut_utility.cpp
+    tests/cpp/ut_vector.cpp
 )
 
 add_library(PolygonDust MODULE "${SOURCES}" "${BINDINGS}")
