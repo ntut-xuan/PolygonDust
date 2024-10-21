@@ -4,6 +4,7 @@ from argparse import ArgumentParser, Namespace
 import pywavefront
 
 from PolygonDust import Polygon, Point
+from PIL import Image, ImageDraw
 
 def initialize_argument_parser() -> ArgumentParser:
     parser: ArgumentParser = ArgumentParser()
@@ -37,6 +38,26 @@ def main():
 
     print([(p.GetX(), p.GetY()) for p in boundary_cell])
 
+    image_size = (500, 500)
+    background_color = (255, 255, 255) 
+    image = Image.new("RGB", image_size, background_color)
+    draw = ImageDraw.Draw(image)
+
+    max_x = -2147483647
+    max_y = -2147483647
+    for p in boundary_cell:
+        max_x = max(p.GetX(), max_x)
+        max_y = max(p.GetY(), max_y)
+
+    offset = 5
+    square_width = (500 - 2*offset) / ((max_x/float(args.particles))+1)
+    squares = [(offset + (p.GetX()/float(args.particles)) * square_width, 500-offset-square_width-(p.GetY()/float(args.particles)) * square_width, square_width) for p in boundary_cell]
+
+    for x, y, side_length in squares:
+        draw.rectangle([x, y, x + side_length, y + side_length], fill="black", width=1)
+
+    image.save("squares.png")
+    image.show()
 
 if __name__ == "__main__":
     main()

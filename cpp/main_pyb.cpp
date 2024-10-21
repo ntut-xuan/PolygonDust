@@ -15,6 +15,7 @@ PYBIND11_MODULE(PolygonDust, m){
            :toctree: _generate
 
            Polygon
+           Point
     )pbdoc";
 
     BindPointClass(m);
