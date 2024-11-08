@@ -4,6 +4,7 @@ project(PolygonDust)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -g")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -Og")
+set(ABSL_PROPAGATE_CXX_STD on)
 
 include(FetchContent)
 
@@ -37,7 +38,7 @@ set(TESTS
 )
 
 add_library(PolygonDust MODULE "${SOURCES}" "${BINDINGS}")
-target_link_libraries(PolygonDust PRIVATE pybind11::module)
+target_link_libraries(PolygonDust PRIVATE GTest::gtest_main pybind11::module)
 set_target_properties(PolygonDust PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
                                      SUFFIX "${PYTHON_MODULE_EXTENSION}")
 

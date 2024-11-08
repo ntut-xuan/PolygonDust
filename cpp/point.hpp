@@ -2,6 +2,7 @@
 #define POINT_H
 
 #include <cmath>
+#include <fstream>
 
 class Point {
 private:
@@ -22,6 +23,11 @@ public:
     bool operator==(const Point &other) const{
         return other.x == x && other.y == y;
     }
+
+    friend void PrintTo(const Point& point, std::ostream* os) {
+        *os << "(" << point.x << ", " << point.y << ")";
+    }
+
     double GetX();
     double GetY();
 };

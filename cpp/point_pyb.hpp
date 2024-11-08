@@ -7,7 +7,7 @@ namespace py = pybind11;
 
 inline void BindPointClass(::pybind11::module_ &m){
     py::class_<Point>(m, "Point")
-        .def(py::init<int, int>())
+        .def(py::init<double, double>())
         .def("GetX", &Point::GetX, "Get the X of the point")
         .def("GetY", &Point::GetY, "Get the Y of the point")
         .doc() = "A Point class for create a point";
