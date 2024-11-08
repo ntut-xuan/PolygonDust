@@ -30,7 +30,7 @@ class Point:
         """
         Get the Y of the point
         """
-    def __init__(self, arg0: int, arg1: int) -> None:
+    def __init__(self, arg0: float, arg1: float) -> None:
         ...
 class Polygon:
     """
@@ -46,6 +46,10 @@ class Polygon:
     def GetBoundaryCell(self, arg0: float) -> list[Point]:
         """
         Get the boundary cell of polygon
+        """
+    def GetPolygonCell(self, arg0: float) -> list[Point]:
+        """
+        Get the polygon cell of polygon
         """
     def GetVertexs(self) -> list[Point]:
         """
