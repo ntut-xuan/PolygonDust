@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "../../cpp/polygon.hpp"
-#include "../../cpp/point.hpp"
+#include "polygon.hpp"
+#include "point.hpp"
 
 TEST(POLYGON_TEST, test_constructor_should_have_correct_vertex){
     std::vector<Point> expected_vertexs = {Point(0, 0), Point(3, 0), Point(3, 3), Point(0, 3)};

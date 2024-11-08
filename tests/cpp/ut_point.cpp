@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../../cpp/point.hpp"
+#include "point.hpp"
 
 TEST(POINT_TEST, test_point_constructor_should_have_correct_x_value){
     Point point(5, 7);

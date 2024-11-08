@@ -4,7 +4,6 @@ project(PolygonDust)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -g")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -Og")
-set(ABSL_PROPAGATE_CXX_STD on)
 
 include(FetchContent)
 
@@ -22,26 +21,26 @@ set(PYBIND11_FINDPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
 
 set(SOURCES ${SOURCES}
-    cpp/polygon.cpp
-    cpp/point.cpp
+    src/polygon.cpp
+    src/point.cpp
 )
 
 set(BINDINGS
-    cpp/main_pyb.cpp
+    src/main_pyb.cpp
 )
 
 set(TESTS
     tests/cpp/ut_point.cpp
     tests/cpp/ut_polygon.cpp
     tests/cpp/ut_utility.cpp
-    tests/cpp/ut_vector.cpp
 )
+
+include_directories(PolygonDust "${CMAKE_BINARY_DIR}/includes")
 
 add_library(PolygonDust MODULE "${SOURCES}" "${BINDINGS}")
 target_link_libraries(PolygonDust PRIVATE GTest::gtest_main pybind11::module)
 set_target_properties(PolygonDust PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
                                      SUFFIX "${PYTHON_MODULE_EXTENSION}")
-
 
 
 enable_testing()

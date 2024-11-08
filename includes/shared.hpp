@@ -2,7 +2,6 @@
 #define UTILITY_H
 
 #include "point.hpp"
-#include "vector.hpp"
 #include <cmath>
 #include <set>
 
