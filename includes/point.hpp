@@ -23,6 +23,24 @@ public:
         }
         return y < other.y;
     }
+    bool operator>(const Point &other) const{
+        if (x != other.x) {
+            return x > other.x;
+        }
+        return y > other.y;
+    }
+    bool operator<=(const Point &other) const{
+        if (x != other.x) {
+            return x <= other.x;
+        }
+        return y <= other.y;
+    }
+    bool operator>=(const Point &other) const{
+        if (x != other.x) {
+            return x >= other.x;
+        }
+        return y >= other.y;
+    }
     bool operator==(const Point &other) const{
         return other.x == x && other.y == y;
     }

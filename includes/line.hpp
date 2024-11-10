@@ -16,6 +16,14 @@ public:
         this->start = start;
         this->end = end;
     }
+
+    Point GetMinimalPoint(){
+        return this->start <= this->end ? this->start : this->end;
+    }
+
+    Point GetMaximalPoint(){
+        return this->start >= this->end ? this->start : this->end;
+    }
     
     /**
       * This is a function for get the intersect point of two lines.
