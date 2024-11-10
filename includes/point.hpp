@@ -10,7 +10,7 @@ private:
     double y = 0;
 public:
     Point() {
-        
+
     };
     Point(double x, double y){
         this->x = x;
@@ -25,12 +25,6 @@ public:
     }
     bool operator==(const Point &other) const{
         return other.x == x && other.y == y;
-    }
-
-    Point operator=(const Point &other) {
-        this->x = other.x;
-        this->y = other.y;
-        return *this;
     }
 
     friend void PrintTo(const Point& point, std::ostream* os) {
