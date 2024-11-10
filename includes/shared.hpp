@@ -15,4 +15,12 @@ inline static double GetDistance(Point first, Point second){
     return std::sqrt(dx * dx + dy * dy);
 }
 
+template<class T>
+inline static bool Between(T val, T min, T max){
+    if(min <= val && val <= max){
+        return true;
+    }
+    return false;
+}
+
 #endif

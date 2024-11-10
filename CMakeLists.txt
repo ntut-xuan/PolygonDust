@@ -33,6 +33,7 @@ set(TESTS
     tests/cpp/ut_point.cpp
     tests/cpp/ut_polygon.cpp
     tests/cpp/ut_utility.cpp
+    tests/cpp/ut_line.cpp
 )
 
 include_directories(PolygonDust "${CMAKE_BINARY_DIR}/includes")
