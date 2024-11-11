@@ -12,6 +12,8 @@ private:
     Point start;
     Point end;
 public:
+    Line() = default;
+    
     Line(Point start, Point end){
         this->start = start;
         this->end = end;

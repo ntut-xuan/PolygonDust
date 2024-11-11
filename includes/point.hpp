@@ -18,28 +18,28 @@ public:
     }
     ~Point() = default;
     bool operator<(const Point &other) const{
-        if (x != other.x) {
-            return x < other.x;
+        if (y != other.y) {
+            return y < other.y;
         }
-        return y < other.y;
+        return x < other.x;
     }
     bool operator>(const Point &other) const{
-        if (x != other.x) {
-            return x > other.x;
+        if (y != other.y) {
+            return y > other.y;
         }
-        return y > other.y;
+        return x > other.x;
     }
     bool operator<=(const Point &other) const{
-        if (x != other.x) {
-            return x <= other.x;
+        if (y != other.y) {
+            return y <= other.y;
         }
-        return y <= other.y;
+        return x <= other.x;
     }
     bool operator>=(const Point &other) const{
-        if (x != other.x) {
-            return x >= other.x;
+        if (y != other.y) {
+            return y >= other.y;
         }
-        return y >= other.y;
+        return x >= other.x;
     }
     bool operator==(const Point &other) const{
         return other.x == x && other.y == y;

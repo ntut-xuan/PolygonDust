@@ -12,6 +12,6 @@ inline void BindPolygonClass(::pybind11::module_ &m){
         .def(py::init())
         .def(py::init<std::vector<Point>>())
         .def("GetArea", &Polygon::GetArea, "Get the area of polygon")
-        .def("GetVertexs", &Polygon::GetVertexs, "Get the vertexs of polygon")
+        // .def("GetVertexs", &Polygon::GetVertexs, "Get the vertexs of polygon")
         .doc() = "A Polygon class for create a polygon";
 }
