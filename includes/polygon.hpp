@@ -5,6 +5,7 @@
 #include "point.hpp"
 #include "shared.hpp"
 #include <algorithm>
+#include <climits>
 #include <cstddef>
 #include <memory>
 #include <vector>
@@ -15,7 +16,7 @@ private:
     std::shared_ptr<std::vector<Point>> vertexs;
     std::shared_ptr<std::vector<Line>> lines;
     std::shared_ptr<std::vector<Point>> localminmaxs;
-    double min_x, min_y, max_x, max_y;
+    double min_x = INT_MAX, min_y = INT_MAX, max_x = INT_MIN, max_y = INT_MIN;
     void ConstructLocalMinMaxPoints(){
         for(size_t i = 0; i < vertexs->size(); i++){
             Point startPoint = vertexs->at(i);

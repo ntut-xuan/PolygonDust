@@ -61,5 +61,16 @@ TEST(POLYGON_TEST, test_is_local_min_max_point_with_not_vertex_point_should_retu
     };
     Polygon polygon(vertexs);
 
-    ASSERT_FALSE(polygon.IsLocalMinMaxPoint(Point(0, 9)));
+    ASSERT_FALSE(polygon.IsLocalMinMaxPoint(Point(0, 0)));
+}
+
+TEST(POLYGON_TEST, test_polygon_lines_with_valid_polygon_should_return_correct_lines){
+    std::shared_ptr<Polygon> polygon = std::make_shared<Polygon>(std::vector<Point>{Point(1, 1), Point(3, 5), Point(6, 3)});
+    std::shared_ptr<std::vector<Line>> lines = polygon->GetLines();
+
+    ASSERT_EQ(*lines.get(), std::vector<Line>({
+        Line(Point(1, 1), Point(3, 5)),
+        Line(Point(3, 5), Point(6, 3)),
+        Line(Point(6, 3), Point(1, 1))
+    }));
 }

@@ -13,7 +13,7 @@ private:
     Point end;
 public:
     Line() = default;
-    
+
     Line(Point start, Point end){
         this->start = start;
         this->end = end;
@@ -25,6 +25,10 @@ public:
 
     Point GetMaximalPoint(){
         return this->start >= this->end ? this->start : this->end;
+    }
+
+    bool operator==(const Line &other) const {
+        return this->start == other.start && this->end == other.end;
     }
     
     /**
@@ -43,6 +47,9 @@ public:
         }
         double m = (this->start.GetY() - this->end.GetY()) / (this->start.GetX() - this->end.GetX());
         double x = this->start.GetX() + (y - this->start.GetY()) / m;
+        if(!Between(x, std::min(this->start.GetX(), this->end.GetX()), std::max(this->start.GetX(), this->end.GetX()))){
+            return std::optional<Point>();
+        }
         return std::optional<Point>({x, y});
     }
 };
