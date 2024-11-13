@@ -35,6 +35,7 @@ set(TESTS
     tests/cpp/ut_utility.cpp
     tests/cpp/ut_line.cpp
     tests/cpp/ut_rasterization.cpp
+    tests/cpp/ut_rasterization_context.cpp
 )
 
 include_directories(PolygonDust "${CMAKE_CURRENT_LIST_DIR}/includes")
