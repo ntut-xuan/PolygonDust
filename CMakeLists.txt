@@ -37,13 +37,15 @@ set(TESTS
     tests/cpp/ut_rasterization.cpp
 )
 
-include_directories(PolygonDust "${CMAKE_BINARY_DIR}/includes")
+include_directories(PolygonDust "${CMAKE_CURRENT_LIST_DIR}/includes")
 
 add_library(PolygonDust MODULE "${SOURCES}" "${BINDINGS}")
 target_link_libraries(PolygonDust PRIVATE GTest::gtest_main pybind11::module)
 set_target_properties(PolygonDust PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
                                      SUFFIX "${PYTHON_MODULE_EXTENSION}")
 
+
+include_directories(PolygonDust "${CMAKE_CURRENT_LIST_DIR}/includes")
 
 enable_testing()
 add_executable(PolygonDust-gtest "${SOURCES}" "${TESTS}")

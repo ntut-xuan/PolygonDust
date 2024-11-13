@@ -10,5 +10,6 @@ inline void BindPointClass(::pybind11::module_ &m){
         .def(py::init<double, double>())
         .def("GetX", &Point::GetX, "Get the X of the point")
         .def("GetY", &Point::GetY, "Get the Y of the point")
+        .def("__repr__", [](const Point& d){ return d.ToString(); })
         .doc() = "A Point class for create a point";
 }

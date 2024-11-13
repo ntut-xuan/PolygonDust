@@ -14,7 +14,7 @@
 """
 from __future__ import annotations
 import typing
-__all__ = ['Point', 'Polygon']
+__all__ = ['Point', 'Polygon', 'RasterizationContext']
 class Point:
     """
     A Point class for create a point
@@ -43,21 +43,26 @@ class Polygon:
         """
         Get the area of polygon
         """
-    def GetBoundaryCell(self, arg0: float) -> list[Point]:
-        """
-        Get the boundary cell of polygon
-        """
-    def GetPolygonCell(self, arg0: float) -> list[Point]:
-        """
-        Get the polygon cell of polygon
-        """
-    def GetVertexs(self) -> list[Point]:
-        """
-        Get the vertexs of polygon
-        """
     @typing.overload
     def __init__(self) -> None:
         ...
     @typing.overload
     def __init__(self, arg0: list[Point]) -> None:
+        ...
+class RasterizationContext:
+    """
+    A RasterizationContext class for add multiple polygon into rasterization
+    """
+    @staticmethod
+    def _pybind11_conduit_v1_(*args, **kwargs):
+        ...
+    def AddPolygon(self, arg0: Polygon) -> None:
+        """
+        Add Polygon
+        """
+    def GetPolygonCell(self, arg0: int) -> list[Point]:
+        """
+        Get the cell of Polygon
+        """
+    def __init__(self, arg0: float) -> None:
         ...

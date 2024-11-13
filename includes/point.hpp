@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <fstream>
+#include <string>
 
 class Point {
 private:
@@ -46,11 +47,15 @@ public:
     }
 
     friend void PrintTo(const Point& point, std::ostream* os) {
-        *os << "(" << point.x << ", " << point.y << ")";
+        *os << point.ToString();
     }
 
     double GetX();
     double GetY();
+
+    std::string ToString() const {
+        return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
+    }
 };
 
 #endif

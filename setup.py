@@ -132,7 +132,7 @@ setup(
     author_email="sigtunatw@gmail.com",
     description="",
     long_description="",
-    ext_modules=[CMakeExtension("cmake_example")],
+    ext_modules=[CMakeExtension("_polygondust")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
     extras_require={"test": ["pytest>=6.0"]},

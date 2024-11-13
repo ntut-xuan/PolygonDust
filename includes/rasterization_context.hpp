@@ -3,23 +3,54 @@
 
 #include "point.hpp"
 #include "polygon.hpp"
+#include "rasterization.hpp"
 #include <algorithm>
+#include <climits>
+#include <memory>
+#include <stdexcept>
 #include <vector>
 
 class RasterizationContext {
 private:
-    double min_x;
-    double max_x;
-    double min_y;
-    double max_y;
+    double min_x = INT_MAX;
+    double max_x = INT_MIN;
+    double min_y = INT_MIN;
+    double max_y = INT_MAX;
     double edge;
-    std::vector<std::vector<Point>> polygons_cells;
+    std::vector<std::shared_ptr<std::vector<Point>>> polygons_cells;
+
+    void UpdateMinMax(Polygon polygon){
+        min_x = std::min(polygon.GetMinX(), min_x);
+        max_x = std::min(polygon.GetMaxX(), max_x);
+        min_y = std::min(polygon.GetMinY(), min_y);
+        max_y = std::min(polygon.GetMaxY(), max_y);
+    }
 public:
     RasterizationContext(double edge){
         this->edge = edge;
     }
     void AddPolygon(Polygon polygon){
-        std::vector<Point> polygon_vertex = polygon.GetVertexs();
+        Rasterization rasterization(std::make_shared<Polygon>(polygon), edge);
+        polygons_cells.push_back(rasterization.GetCells());
+        UpdateMinMax(polygon);
+    }
+    double GetMinX(){
+        return this->min_x;
+    }
+    double GetMaxX(){
+        return this->max_x;
+    }
+    double GetMinY(){
+        return this->min_y;
+    }
+    double GetMaxY(){
+        return this->max_y;
+    }
+    std::vector<Point> GetPolygonCell(size_t index){
+        if(polygons_cells.size() <= index){
+            throw std::out_of_range("Index out of range");
+        }
+        return *polygons_cells[index];
     }
 };
 
