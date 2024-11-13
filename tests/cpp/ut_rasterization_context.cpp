@@ -19,6 +19,30 @@ TEST(RASTERIZATION_CONTEXT_TEST, test_rasterization_context_with_one_polygon_sho
     }));
 }
 
+TEST(RASTERIZATION_CONTEXT_TEST, test_rasterization_context_with_multiple_polygon_should_have_correct_polygons){
+    RasterizationContext rasterizationContext(1);
+    std::shared_ptr<Polygon> polygon1 = std::make_shared<Polygon>(std::vector<Point>{Point(1, 1), Point(3, 5), Point(6, 3)});
+    std::shared_ptr<Polygon> polygon2 = std::make_shared<Polygon>(std::vector<Point>{Point(0, 0), Point(2, 4), Point(5, 2)});
+    rasterizationContext.AddPolygon(*polygon1.get());
+    rasterizationContext.AddPolygon(*polygon2.get());
+
+    std::vector<Point> cells1 = rasterizationContext.GetPolygonCell(0);
+    std::vector<Point> cells2 = rasterizationContext.GetPolygonCell(1);
+
+    ASSERT_EQ(cells1, std::vector<Point>({
+        Point(1, 1),
+        Point(2, 2), Point(3, 2), 
+        Point(2, 3), Point(3, 3), Point(4, 3), Point(5, 3),
+        Point(3, 4), Point(4, 4),
+    }));
+    ASSERT_EQ(cells2, std::vector<Point>({
+        Point(0, 0),
+        Point(1, 1), Point(2, 1), 
+        Point(1, 2), Point(2, 2), Point(3, 2), Point(4, 2),
+        Point(2, 3), Point(3, 3),
+    }));
+}
+
 TEST(RASTERIZATION_CONTEXT_TEST, test_rasterization_context_with_multiple_polygon_should_have_correct_minimal_x){
     RasterizationContext rasterizationContext(1);
     std::shared_ptr<Polygon> polygon1 = std::make_shared<Polygon>(std::vector<Point>{Point(1, 1), Point(3, 5), Point(6, 3)});
