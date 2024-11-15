@@ -56,9 +56,14 @@ class RasterizationGraphicContext:
     def draw_grid(self):
         cells_x = (self.max_x - self.min_x) // self.edge
         cells_y = (self.max_y - self.min_y) // self.edge
+        cells_x_width = (self.image_size[0] - self.padding * 2) // cells_x
+        cells_y_width = (self.image_size[1] - self.padding * 2) // cells_y
+        cells_width = min(cells_x_width, cells_y_width)
+        cells_max_x = (self.image_size[0] - self.padding * 2) // cells_width
+        cells_max_y = (self.image_size[1] - self.padding * 2) // cells_width
         
-        for index_x in range(int(cells_x)):
-            for index_y in range(int(cells_y)):
+        for index_x in range(int(cells_max_x)):
+            for index_y in range(int(cells_max_y)):
                 cells_xy = self.__transform_index_xy_to_cells_boundary(index_x, index_y)
                 self.draw.rectangle(cells_xy, outline="black")
 

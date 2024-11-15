@@ -61,7 +61,6 @@ def main():
                     counts[point.GetY()] += 1
                 graphic_context.draw_cell(point.GetX(), point.GetY(), "red")
 
-            print(counts)
             graphic_context.show()
 
 if __name__ == "__main__":
