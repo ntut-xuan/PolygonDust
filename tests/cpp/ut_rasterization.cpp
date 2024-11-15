@@ -14,5 +14,6 @@ TEST(RASTERIZATION_TEST, test_rasterization_with_valid_polygon_should_transfrom_
         Point(2, 2), Point(3, 2), 
         Point(2, 3), Point(3, 3), Point(4, 3), Point(5, 3),
         Point(3, 4), Point(4, 4),
+        Point(3, 5)
     }));
 }

@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <climits>
 #include <cstddef>
+#include <iostream>
 #include <memory>
 #include <vector>
 #include <set>
@@ -15,7 +16,7 @@ class Polygon {
 private:
     std::shared_ptr<std::vector<Point>> vertexs;
     std::shared_ptr<std::vector<Line>> lines;
-    std::shared_ptr<std::vector<Point>> localminmaxs;
+    std::shared_ptr<std::set<Point>> localminmaxs;
     double min_x = INT_MAX, min_y = INT_MAX, max_x = INT_MIN, max_y = INT_MIN;
     void ConstructLocalMinMaxPoints(){
         for(size_t i = 0; i < vertexs->size(); i++){
@@ -23,10 +24,9 @@ private:
             Point middlePoint = vertexs->at((i+1)%(vertexs->size()));
             Point endPoint = vertexs->at((i+2)%(vertexs->size()));
             if(!(Between(middlePoint.GetY(), startPoint.GetY(), endPoint.GetY()) || Between(middlePoint.GetY(), endPoint.GetY(), startPoint.GetY()))){
-                localminmaxs->push_back(middlePoint);
+                localminmaxs->insert(middlePoint);
             }
         }
-        std::sort(localminmaxs->begin(), localminmaxs->end());
     }
     void ConstructLines(){
         for(size_t i = 0; i < vertexs->size(); i++){
@@ -40,7 +40,7 @@ public:
     Polygon(std::vector<Point> vertexs){
         this->vertexs = std::make_shared<std::vector<Point>>(vertexs.begin(), vertexs.end());
         this->lines = std::make_shared<std::vector<Line>>();
-        this->localminmaxs = std::make_shared<std::vector<Point>>();
+        this->localminmaxs = std::make_shared<std::set<Point>>();
         for(Point p : vertexs){
             min_x = std::min(p.GetX(), min_x);
             max_x = std::max(p.GetX(), max_x);

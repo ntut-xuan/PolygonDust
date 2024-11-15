@@ -16,6 +16,7 @@ TEST(RASTERIZATION_CONTEXT_TEST, test_rasterization_context_with_one_polygon_sho
         Point(2, 2), Point(3, 2), 
         Point(2, 3), Point(3, 3), Point(4, 3), Point(5, 3),
         Point(3, 4), Point(4, 4),
+        Point(3, 5)
     }));
 }
 
@@ -34,12 +35,14 @@ TEST(RASTERIZATION_CONTEXT_TEST, test_rasterization_context_with_multiple_polygo
         Point(2, 2), Point(3, 2), 
         Point(2, 3), Point(3, 3), Point(4, 3), Point(5, 3),
         Point(3, 4), Point(4, 4),
+        Point(3, 5), 
     }));
     ASSERT_EQ(cells2, std::vector<Point>({
         Point(0, 0),
         Point(1, 1), Point(2, 1), 
         Point(1, 2), Point(2, 2), Point(3, 2), Point(4, 2),
         Point(2, 3), Point(3, 3),
+        Point(2, 4)
     }));
 }
 

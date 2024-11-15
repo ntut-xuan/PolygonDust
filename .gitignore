@@ -182,3 +182,4 @@ CMakeUserPresets.json
 build.ninja
 
 build/
+.clangd

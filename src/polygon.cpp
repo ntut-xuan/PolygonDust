@@ -33,9 +33,9 @@ std::shared_ptr<std::vector<Line>>Polygon::GetLines(){
 }
 
 std::shared_ptr<std::vector<Point>> Polygon::GetLocalMinMaxVertexs(){
-    return this->localminmaxs;
+    return std::make_shared<std::vector<Point>>(localminmaxs->begin(), localminmaxs->end());
 }
 
 bool Polygon::IsLocalMinMaxPoint(Point point){
-    return std::binary_search(localminmaxs->begin(), localminmaxs->end(), point);
+    return localminmaxs->find(point) != localminmaxs->end();
 }
