@@ -32,6 +32,8 @@ class Point:
         """
     def __init__(self, arg0: float, arg1: float) -> None:
         ...
+    def __repr__(self) -> str:
+        ...
 class Polygon:
     """
     A Polygon class for create a polygon
@@ -60,9 +62,29 @@ class RasterizationContext:
         """
         Add Polygon
         """
+    def GetMaxX(self) -> float:
+        """
+        Get max X
+        """
+    def GetMaxY(self) -> float:
+        """
+        Get max Y
+        """
+    def GetMinX(self) -> float:
+        """
+        Get min X
+        """
+    def GetMinY(self) -> float:
+        """
+        Get min Y
+        """
     def GetPolygonCell(self, arg0: int) -> list[Point]:
         """
         Get the cell of Polygon
         """
+    def __enter__(self) -> RasterizationContext:
+        ...
+    def __exit__(self, arg0: typing.Any, arg1: typing.Any, arg2: typing.Any) -> None:
+        ...
     def __init__(self, arg0: float) -> None:
         ...

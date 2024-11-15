@@ -49,7 +49,7 @@ private:
         int xCellSize = ((polygon->GetMaxX() - polygon->GetMinX()) / edge);
         int yCellSize = ((polygon->GetMaxY() - polygon->GetMinY()) / edge);
 
-        for(int i = 0; i < yCellSize; i++){
+        for(int i = 0; i < yCellSize + 5; i++){
             double y = polygon->GetMinY() + edge * i;
             int xIntersecPointIndex = 0;
             UpdateIntersectPoints(y);
