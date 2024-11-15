@@ -8,7 +8,7 @@ from draw_util.rasterization_graphic_context import RasterizationGraphicContext,
 
 def initialize_argument_parser() -> ArgumentParser:
     parser: ArgumentParser = ArgumentParser()
-    parser.add_argument("-i", "--input", help="Input a polygon with vertexs.")
+    parser.add_argument("-i", "--input", help="Input a polygon with vertexs.", action='append', nargs='+')
     parser.add_argument("-p", "--particles", help="Particles size (in pixel).")
     return parser
 
@@ -26,18 +26,24 @@ def main():
         parser.print_help()
         return
 
+    print("Input polygons:", len(args.input))
     print("Input vertexs:", args.input)
     print("Particles edge:", args.particles, "m")
 
     edge: float = float(args.particles)
+    polygons: list[Polygon] = []
 
-    scene: pywavefront.Wavefront = pywavefront.Wavefront(args.input, strict=True, encoding="utf-8", parse=False)
-    scene.parse()
+    for polygon_path in args.input:
+        scene: pywavefront.Wavefront = pywavefront.Wavefront(polygon_path[0], strict=True, encoding="utf-8", parse=False)
+        scene.parse()
 
-    polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in scene.vertices])
+        polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in scene.vertices])
+        polygons.append(polygon)
 
     with RasterizationContext(edge) as raster_context:
-        raster_context.AddPolygon(polygon)
+        for polygon in polygons:
+            raster_context.AddPolygon(polygon)
+        
         with RasterizationGraphicContext(
             edge, 
             RasterizationGraphicContextBoundary(
@@ -50,18 +56,13 @@ def main():
             graphic_context.draw_grid()
             graphic_context.draw_boundary()
 
-            cells = raster_context.GetPolygonCell(0)
+            for i in range(len(polygons)):
+                cells = raster_context.GetPolygonCell(i)
 
-            counts: dict[str, int] = {}
+                for point in cells:
+                    graphic_context.draw_cell(point.GetX(), point.GetY(), graphic_context.color_set(i))
 
-            for point in cells:
-                if point.GetY() not in counts:
-                    counts[point.GetY()] = 1
-                else:
-                    counts[point.GetY()] += 1
-                graphic_context.draw_cell(point.GetX(), point.GetY(), "red")
-
-            graphic_context.show()
+                graphic_context.show()
 
 if __name__ == "__main__":
     main()

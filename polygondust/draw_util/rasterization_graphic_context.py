@@ -11,6 +11,10 @@ class RasterizationGraphicContextBoundary:
 
 
 class RasterizationGraphicContext:
+    def color_set(self, index: int):
+        color_set = ["red", "blue", "green"]
+        return color_set[index % len(color_set)]
+
     def __init__(self, edge: int, boundaryXY: RasterizationGraphicContextBoundary, padding: float = 50):
         self.edge = edge
         self.image_size = (5000, 5000)
