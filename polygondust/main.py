@@ -10,6 +10,7 @@ def initialize_argument_parser() -> ArgumentParser:
     parser: ArgumentParser = ArgumentParser()
     parser.add_argument("-i", "--input", help="Input a polygon with vertexs.", action='append', nargs='+')
     parser.add_argument("-p", "--particles", help="Particles size (in pixel).")
+    parser.add_argument("-o", "--operation", help="Polygon Operation (Union=U, Intersect=I, Cut=C), e.g. \"UUIC\"")
     return parser
 
 def main():
@@ -29,8 +30,10 @@ def main():
     print("Input polygons:", len(args.input))
     print("Input vertexs:", args.input)
     print("Particles edge:", args.particles, "m")
+    print("Operation:", args.operation)
 
     edge: float = float(args.particles)
+    operation = str(args.operation)
     polygons: list[Polygon] = []
 
     for polygon_path in args.input:
@@ -51,18 +54,32 @@ def main():
                 raster_context.GetMaxX(), 
                 raster_context.GetMinY(), 
                 raster_context.GetMaxY()
-            )
+            ),
+            padding=150
         ) as graphic_context:
-            graphic_context.draw_grid()
-            graphic_context.draw_boundary()
+            if len(operation) == 0:
+                for i in range(len(polygons)):
+                    for point in raster_context.GetPolygonCell(i):
+                        graphic_context.draw_cell(point.GetX(), point.GetY(), graphic_context.color_set(i))
+            else:
+                cells0 = raster_context.GetPolygonCell(0)
+                for i in range(1, len(polygons)):
+                    cells2 = raster_context.GetPolygonCell(i)
+                    oper = operation[i-1]
 
-            for i in range(len(polygons)):
-                cells = raster_context.GetPolygonCell(i)
+                    if oper == 'U':
+                        cells0.Union(cells2)
 
-                for point in cells:
-                    graphic_context.draw_cell(point.GetX(), point.GetY(), graphic_context.color_set(i))
+                    if oper == 'I':
+                        cells0.Intersect(cells2)
 
-                graphic_context.show()
+                    if oper == 'C':
+                        cells0.Cut(cells2)
+
+                for point in cells0.GetCellSet():
+                    graphic_context.draw_cell(point.GetX(), point.GetY(), graphic_context.color_set(0))
+
+            graphic_context.show()
 
 if __name__ == "__main__":
     main()

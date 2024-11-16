@@ -2,8 +2,14 @@
 #define POINT_H
 
 #include <cmath>
-#include <fstream>
 #include <string>
+
+#define IS_NOT_EQUAL(x, y) (long long)((x + 1e-9) * 1e9) != (long long)((y + 1e-9) * 1e9)
+#define IS_LESS_THAN(x, y) (long long)((x + 1e-9) * 1e9) < (long long)((y + 1e-9) * 1e9)
+#define IS_LESS_EQUAL(x, y) (long long)((x + 1e-9) * 1e9) <= (long long)((y + 1e-9) * 1e9)
+#define IS_GREATER_THAN(x, y) (long long)((x + 1e-9) * 1e9) > (long long)((y + 1e-9) * 1e9)
+#define IS_GREATER_EQUAL(x, y) (long long)((x + 1e-9) * 1e9) >= (long long)((y + 1e-9) * 1e9)
+#define IS_EQUAL(x, y) (long long)((x + 1e-9) * 1e9) == (long long)((y + 1e-9) * 1e9)
 
 class Point {
 private:
@@ -19,39 +25,39 @@ public:
     }
     ~Point() = default;
     bool operator<(const Point &other) const{
-        if (y != other.y) {
-            return y < other.y;
+        if (IS_NOT_EQUAL(y, other.y)) {
+            return IS_LESS_THAN(y, other.y);
         }
-        return x < other.x;
+        return IS_LESS_THAN(x, other.x);
     }
     bool operator>(const Point &other) const{
-        if (y != other.y) {
-            return y > other.y;
+        if (IS_NOT_EQUAL(y, other.y)) {
+            return IS_GREATER_THAN(y, other.y);
         }
-        return x > other.x;
+        return IS_GREATER_THAN(x, other.x);
     }
     bool operator<=(const Point &other) const{
-        if (y != other.y) {
-            return y <= other.y;
+        if (IS_NOT_EQUAL(y, other.y)) {
+            return IS_LESS_EQUAL(y, other.y);
         }
-        return x <= other.x;
+        return IS_LESS_EQUAL(x, other.x);
     }
     bool operator>=(const Point &other) const{
-        if (y != other.y) {
-            return y >= other.y;
+        if (IS_NOT_EQUAL(y, other.y)) {
+            return IS_GREATER_EQUAL(y, other.y);
         }
-        return x >= other.x;
+        return IS_GREATER_EQUAL(x, other.x);
     }
     bool operator==(const Point &other) const{
-        return other.x == x && other.y == y;
+        return IS_EQUAL(x, other.x) && IS_EQUAL(y, other.y);
     }
 
     friend void PrintTo(const Point& point, std::ostream* os) {
         *os << point.ToString();
     }
 
-    double GetX();
-    double GetY();
+    double GetX() const;
+    double GetY() const;
 
     std::string ToString() const {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";

@@ -10,11 +10,13 @@
 
            Polygon
            Point
+           RasterizationContext
+           RasterizationCells
     
 """
 from __future__ import annotations
 import typing
-__all__ = ['Point', 'Polygon', 'RasterizationContext']
+__all__ = ['Point', 'Polygon', 'RasterizationCells', 'RasterizationContext']
 class Point:
     """
     A Point class for create a point
@@ -51,6 +53,31 @@ class Polygon:
     @typing.overload
     def __init__(self, arg0: list[Point]) -> None:
         ...
+class RasterizationCells:
+    """
+    A Rasterization Cell class for store the cell and do some operation
+    """
+    @staticmethod
+    def _pybind11_conduit_v1_(*args, **kwargs):
+        ...
+    def Cut(self, arg0: RasterizationCells) -> None:
+        """
+        Get the cell set
+        """
+    def GetCellSet(self) -> set[Point]:
+        """
+        Get the cell set
+        """
+    def Intersect(self, arg0: RasterizationCells) -> None:
+        """
+        Get the cell set
+        """
+    def Union(self, arg0: RasterizationCells) -> None:
+        """
+        Get the cell set
+        """
+    def __init__(self, arg0: list[Point]) -> None:
+        ...
 class RasterizationContext:
     """
     A RasterizationContext class for add multiple polygon into rasterization
@@ -78,7 +105,7 @@ class RasterizationContext:
         """
         Get min Y
         """
-    def GetPolygonCell(self, arg0: int) -> list[Point]:
+    def GetPolygonCell(self, arg0: int) -> RasterizationCells:
         """
         Get the cell of Polygon
         """

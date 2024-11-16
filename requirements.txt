@@ -1,1 +1,4 @@
 pybind11==2.13.6
+pywavefront==1.3.3
+pillow==11.0.0
+pybind11-stubgen==2.5.1

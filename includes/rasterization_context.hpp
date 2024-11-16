@@ -4,6 +4,7 @@
 #include "point.hpp"
 #include "polygon.hpp"
 #include "rasterization.hpp"
+#include "rasterization_cells.hpp"
 #include <algorithm>
 #include <climits>
 #include <memory>
@@ -46,11 +47,11 @@ public:
     double GetMaxY(){
         return this->max_y;
     }
-    std::vector<Point> GetPolygonCell(size_t index){
+    RasterizationCells GetPolygonCell(size_t index){
         if(polygons_cells.size() <= index){
             throw std::out_of_range("Index out of range");
         }
-        return *polygons_cells[index];
+        return RasterizationCells(*polygons_cells[index]);
     }
 };
 

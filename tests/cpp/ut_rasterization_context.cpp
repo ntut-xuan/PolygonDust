@@ -3,15 +3,16 @@
 
 #include "point.hpp"
 #include "rasterization_context.hpp"
+#include "rasterization_cells.hpp"
 
 TEST(RASTERIZATION_CONTEXT_TEST, test_rasterization_context_with_one_polygon_should_have_correct_polygon){
     RasterizationContext rasterizationContext(1);
     std::shared_ptr<Polygon> polygon = std::make_shared<Polygon>(std::vector<Point>{Point(1, 1), Point(3, 5), Point(6, 3)});
     rasterizationContext.AddPolygon(*polygon.get());
 
-    std::vector<Point> cells = rasterizationContext.GetPolygonCell(0);
+    RasterizationCells cells = rasterizationContext.GetPolygonCell(0);
 
-    ASSERT_EQ(cells, std::vector<Point>({
+    ASSERT_EQ(cells.GetCellSet(), std::set<Point>({
         Point(1, 1),
         Point(2, 2), Point(3, 2), 
         Point(2, 3), Point(3, 3), Point(4, 3), Point(5, 3),
@@ -27,17 +28,17 @@ TEST(RASTERIZATION_CONTEXT_TEST, test_rasterization_context_with_multiple_polygo
     rasterizationContext.AddPolygon(*polygon1.get());
     rasterizationContext.AddPolygon(*polygon2.get());
 
-    std::vector<Point> cells1 = rasterizationContext.GetPolygonCell(0);
-    std::vector<Point> cells2 = rasterizationContext.GetPolygonCell(1);
+    RasterizationCells cells1 = rasterizationContext.GetPolygonCell(0);
+    RasterizationCells cells2 = rasterizationContext.GetPolygonCell(1);
 
-    ASSERT_EQ(cells1, std::vector<Point>({
+    ASSERT_EQ(cells1.GetCellSet(), std::set<Point>({
         Point(1, 1),
         Point(2, 2), Point(3, 2), 
         Point(2, 3), Point(3, 3), Point(4, 3), Point(5, 3),
         Point(3, 4), Point(4, 4),
         Point(3, 5), 
     }));
-    ASSERT_EQ(cells2, std::vector<Point>({
+    ASSERT_EQ(cells2.GetCellSet(), std::set<Point>({
         Point(0, 0),
         Point(1, 1), Point(2, 1), 
         Point(1, 2), Point(2, 2), Point(3, 2), Point(4, 2),

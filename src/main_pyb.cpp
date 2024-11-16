@@ -4,6 +4,7 @@
 #include "point_pyb.hpp"
 #include "polygon_pyb.hpp"
 #include "rasterization_context_pyb.hpp"
+#include "rasterization_cells_pyb.hpp"
 
 PYBIND11_MODULE(PolygonDust, m){
     m.doc() = R"pbdoc(
@@ -17,9 +18,12 @@ PYBIND11_MODULE(PolygonDust, m){
 
            Polygon
            Point
+           RasterizationContext
+           RasterizationCells
     )pbdoc";
 
     BindPointClass(m);
     BindPolygonClass(m);
     BindRasterizationContextClass(m);
+    BindRasterizationCellsClass(m);
 }

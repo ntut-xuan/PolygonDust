@@ -1,9 +1,9 @@
 #include "point.hpp"
 
-double Point::GetX(){
-    return this->x;
+double Point::GetX() const{
+    return std::round(this->x * 1e6) / 1e6;
 }
 
-double Point::GetY(){
-    return this->y;
+double Point::GetY() const {
+    return std::round(this->y * 1e6) / 1e6;
 }
