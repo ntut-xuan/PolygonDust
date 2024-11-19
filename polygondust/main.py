@@ -2,6 +2,7 @@ from __future__ import print_function
 from argparse import ArgumentParser, Namespace
 
 import pywavefront
+import fiona
 
 from PolygonDust import Polygon, Point, RasterizationContext
 from draw_util.rasterization_graphic_context import RasterizationGraphicContext, RasterizationGraphicContextBoundary
@@ -9,6 +10,7 @@ from draw_util.rasterization_graphic_context import RasterizationGraphicContext,
 def initialize_argument_parser() -> ArgumentParser:
     parser: ArgumentParser = ArgumentParser()
     parser.add_argument("-i", "--input", help="Input a polygon with vertexs.", action='append', nargs='+')
+    parser.add_argument("-s", "--input_shpfile", help="Input a shapefile with vertexs.", action='append', nargs='+')
     parser.add_argument("-p", "--particles", help="Particles size (in pixel).")
     parser.add_argument("-o", "--operation", help="Polygon Operation (Union=U, Intersect=I, Cut=C), e.g. \"UUIC\"")
     return parser
@@ -17,7 +19,7 @@ def main():
     parser: ArgumentParser = initialize_argument_parser()
     args: Namespace = parser.parse_args()
 
-    if args.input is None:
+    if args.input is None and args.input_shpfile is None:
         print("Error: You need to input image file.")
         parser.print_help()
         return
@@ -27,8 +29,15 @@ def main():
         parser.print_help()
         return
 
-    print("Input polygons:", len(args.input))
-    print("Input vertexs:", args.input)
+    # print("Input polygons:", len(0 if args.input is None else len(args.input)))
+    # print("Input shapefiles:", len(0 if args.input_shpfile is None else len(args.input_shpfile)))
+
+    if args.input is not None:
+        print("Input vertexs:", args.input)
+    
+    if args.input_shpfile is not None:
+        print("Input shapefile vertexs:", args.input_shpfile)
+    
     print("Particles edge:", args.particles, "m")
     print("Operation:", args.operation)
 
@@ -36,12 +45,35 @@ def main():
     operation = str(args.operation)
     polygons: list[Polygon] = []
 
-    for polygon_path in args.input:
-        scene: pywavefront.Wavefront = pywavefront.Wavefront(polygon_path[0], strict=True, encoding="utf-8", parse=False)
-        scene.parse()
+    if args.input is not None:
+        for polygon_path in args.input:
+            scene: pywavefront.Wavefront = pywavefront.Wavefront(polygon_path[0], strict=True, encoding="utf-8", parse=False)
+            scene.parse()
 
-        polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in scene.vertices])
-        polygons.append(polygon)
+            polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in scene.vertices])
+            polygons.append(polygon)
+        
+    if args.input_shpfile is not None:
+        for shapefile_path in args.input_shpfile:
+            with fiona.open(shapefile_path[0], "r") as shapefile:
+                for feature in shapefile:
+                    geometry = feature['geometry']
+                
+                    print(geometry)
+
+                    # Ensure it's a polygon
+                    if geometry['type'] == 'Polygon':
+                        coordinates = geometry['coordinates'][0]  # Outer boundary
+                        print(f"Shapefile {shapefile_path} have {len(coordinates)} vertexes.")
+                        polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in coordinates])
+                        polygons.append(polygon)
+
+                    if geometry['type'] == "MultiPolygon":
+                        for i in range(len(geometry['coordinates'])):
+                            coordinates = geometry['coordinates'][i][0]
+                            print(f"Shapefile {shapefile_path} have {len(coordinates)} vertexes.")
+                            polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in coordinates])
+                            polygons.append(polygon)
 
     with RasterizationContext(edge) as raster_context:
         for polygon in polygons:
@@ -57,15 +89,18 @@ def main():
             ),
             padding=150
         ) as graphic_context:
-            if len(operation) == 0:
+            if args.operation is None or len(operation) == 0:
+                print(f"Printing {len(polygons)} polygons.")
                 for i in range(len(polygons)):
-                    for point in raster_context.GetPolygonCell(i):
+                    for point in raster_context.GetPolygonCell(i).GetCellSet():
                         graphic_context.draw_cell(point.GetX(), point.GetY(), graphic_context.color_set(i))
             else:
                 cells0 = raster_context.GetPolygonCell(0)
                 for i in range(1, len(polygons)):
                     cells2 = raster_context.GetPolygonCell(i)
                     oper = operation[i-1]
+
+                    print(f"Operating Polygon {i+1}")
 
                     if oper == 'U':
                         cells0.Union(cells2)
@@ -74,10 +109,14 @@ def main():
                         cells0.Intersect(cells2)
 
                     if oper == 'C':
+                        print(f"Process opreation CUT on polygon {i+1}")
                         cells0.Cut(cells2)
 
+                print(f"Drawing {len(cells0.GetCellSet())} cells.")
                 for point in cells0.GetCellSet():
                     graphic_context.draw_cell(point.GetX(), point.GetY(), graphic_context.color_set(0))
+                
+                print("Area: ", len(cells0.GetCellSet()) * edge * edge)
 
             graphic_context.show()
 

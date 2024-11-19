@@ -50,11 +50,11 @@ private:
         int yCellSize = ((polygon->GetMaxY() - polygon->GetMinY()) / edge);
 
         for(int i = 0; i < yCellSize + 5; i++){
-            double y = std::round(polygon->GetMinY() * 1e6) / 1e6 + edge * i;
+            double y = std::round(std::round(polygon->GetMinY() / edge) * edge * 1e6) / 1e6 + edge * i;
             int xIntersecPointIndex = 0;
             UpdateIntersectPoints(y);
             for(int j = 0; j < xCellSize; j++){
-                double x = std::round(polygon->GetMinX() * 1e6) / 1e6 + edge * j;
+                double x = std::round(std::round(polygon->GetMinX() / edge) * edge * 1e6) / 1e6 + edge * j;
 
                 if(xIntersecPointIndex < (int) intersectPoints.size() && x >= intersectPoints[xIntersecPointIndex].GetX()){
                     xIntersecPointIndex += 1;
