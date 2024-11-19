@@ -6,13 +6,16 @@
 
 PolygonDust is an application to measure the area size of polygon with support complex polygon overlap analysis. You can cut, union, or intersect any two polygon to make a complex ploygon.
 
-PolygonDust use raster-based method to measure the area size of polygon instead of vector-based method. We use *adjustable error-rate*[1] to strive for the fast process of overlap analysis, cause vector-based ovelap analysis will not efficient when meet huge amount of vertexs of polygon [2].
+PolygonDust use raster-based method to measure the area size of polygon instead of vector-based method. We use *adjustable error-rate* [1] to strive for the fast process of overlap analysis, cause vector-based ovelap analysis will not efficient when meet huge amount of vertexs of polygon [2].
 
-PolygonDust accept Shapefile (Should be polygon or multipolygon) or Waveform object file. Please take a look about [Usage](#usage)
+PolygonDust accept Shapefile (Should be polygon or multipolygon) or Waveform object file. Please take a look about [Usage](#usage).
+
+ * [1] We call it *adjustable error-rate* becasue the user can decide small size of particles and decrease the error-rate. With small particles may increase the accuracy but also increase the process time, large particles may increase the error-rate but faster.
+ * [2] We reference the view of this paper [Rasterization Computing-Based Parallel Vector Polygon Overlay Analysis Algorithms Using OpenMP and MPI](https://ieeexplore.ieee.org/abstract/document/8335249), which declare that vector-based polygon overlap analysis may inefficient on the polygon with huge amount of vertexes.
 
 ## Installization
 
-Please make sure that you already have C++ compiler, CMake and Make.
+Please make sure that you already have Python environment, C++ compiler, CMake and Make.
 
 ```
 pip install -r requirements.txt
