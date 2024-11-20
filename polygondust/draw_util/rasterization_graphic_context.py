@@ -12,7 +12,7 @@ class RasterizationGraphicContextBoundary:
 
 class RasterizationGraphicContext:
     def color_set(self, index: int):
-        color_set = ["red", "blue", "green"]
+        color_set = ["#F44336", "#3F51B5", "#8BC34A"]
         return color_set[index % len(color_set)]
 
     def __init__(self, edge: int, boundaryXY: RasterizationGraphicContextBoundary, padding: float = 50):

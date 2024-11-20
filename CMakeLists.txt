@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 project(PolygonDust)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -g")
-set(CMAKE_CXX_FLAGS_DEBUG "-Werror -Og")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -O3 -pedantic")
+set(CMAKE_CXX_FLAGS_DEBUG "-Werror -O3 -g")
 
 include(FetchContent)
 
@@ -39,15 +39,41 @@ set(TESTS
     tests/cpp/ut_rasterization_cells.cpp
 )
 
+option(COVERAGE "Enable coverage" OFF)
+
+if(COVERAGE)
+    set(CMAKE_C_FLAGS "--coverage -g -O0")
+    set(CMAKE_CXX_FLAGS "--coverage -g -O0")
+
+    include(scripts/CodeCoverage.cmake)
+    set(CODE_COVERAGE_VERBOSE ON)
+    set(COVERAGE_EXCLUDE
+            ${CMAKE_BINARY_DIR}/_deps/*
+            ${PROJECT_SOURCE_DIR}/test/*
+            ${PROJECT_SOURCE_DIR}/pyb_includes/*
+            ${PROJECT_SOURCE_DIR}/src/main_pyb.cpp
+    )
+
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        set(GCOVR_ADDITIONAL_ARGS
+                --gcov-executable "llvm-cov gcov"
+        )
+    endif()
+
+    append_coverage_compiler_flags()
+    setup_target_for_coverage_gcovr_html(
+            NAME polygondust-coverage
+            DEPENDENCIES PolygonDust
+            EXCLUDE ${COVERAGE_EXCLUDE}
+    )
+endif()
+
 include_directories(PolygonDust "${CMAKE_CURRENT_LIST_DIR}/includes")
+include_directories(PolygonDust "${CMAKE_CURRENT_LIST_DIR}/pyb_includes")
 
 add_library(PolygonDust MODULE "${SOURCES}" "${BINDINGS}")
 target_link_libraries(PolygonDust PRIVATE GTest::gtest_main pybind11::module)
-set_target_properties(PolygonDust PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
-                                     SUFFIX "${PYTHON_MODULE_EXTENSION}")
-
-
-include_directories(PolygonDust "${CMAKE_CURRENT_LIST_DIR}/includes")
+set_target_properties(PolygonDust PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}" SUFFIX "${PYTHON_MODULE_EXTENSION}")
 
 enable_testing()
 add_executable(PolygonDust-gtest "${SOURCES}" "${TESTS}")

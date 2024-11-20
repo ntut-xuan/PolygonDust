@@ -92,8 +92,11 @@ def main():
             if args.operation is None or len(operation) == 0:
                 print(f"Printing {len(polygons)} polygons.")
                 for i in range(len(polygons)):
-                    for point in raster_context.GetPolygonCell(i).GetCellSet():
+                    cellset = raster_context.GetPolygonCell(i).GetCellSet()
+                    print(len(cellset))
+                    for point in cellset:
                         graphic_context.draw_cell(point.GetX(), point.GetY(), graphic_context.color_set(i))
+                    print("Area: ", len(cellset) * edge * edge)
             else:
                 cells0 = raster_context.GetPolygonCell(0)
                 for i in range(1, len(polygons)):

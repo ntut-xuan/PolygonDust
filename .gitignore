@@ -183,3 +183,6 @@ build.ninja
 
 build/
 .clangd
+
+!CodeCoverage.cmake
+coverage_build/
