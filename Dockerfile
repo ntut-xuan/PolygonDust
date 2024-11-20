@@ -6,5 +6,3 @@ RUN python3 -m pip install "pybind11[global]"
 COPY . /polygondust
 
 WORKDIR /polygondust
-RUN cmake .
-RUN make -j 10
