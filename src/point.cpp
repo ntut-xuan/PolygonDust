@@ -1,4 +1,5 @@
 #include "point.hpp"
+#include <cmath>
 
 double Point::GetX() const{
     return std::round(this->x * 1e6) / 1e6;
