@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build Docker image
         run: |
-          docker build -t polygondust Dockerfile.coverage
+          docker build -t polygondust ./Dockerfile.coverage
       
       - name: Run Test
         run: |
