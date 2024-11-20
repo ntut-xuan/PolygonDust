@@ -18,7 +18,7 @@ cmake \
 
 cmake --build $BUILD_DIR
 
-"./${BUILD_DIR}/build/polygondust-gtest"
+"./${BUILD_DIR}/build/PolygonDust-gtest"
 
 if [ "$1" == 'xml' ] 
 then
