@@ -18,6 +18,11 @@ cmake \
 
 cmake --build $BUILD_DIR
 
-"./${BUILD_DIR}/build/polygondust-gtest"
+"./${BUILD_DIR}/build/PolygonDust-gtest"
 
-cmake --build $BUILD_DIR --target polygondust-coverage
+if [ "$1" == 'xml' ] 
+then
+    cmake --build $BUILD_DIR --target polygondust-coverage-xml;
+else
+    cmake --build $BUILD_DIR --target polygondust-coverage;
+fi
