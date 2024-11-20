@@ -10,6 +10,8 @@
 
 BUILD_DIR=coverage_build
 
+rm -rf ./${BUILD_DIR}
+
 cmake \
     -B $BUILD_DIR \
     -DCOVERAGE=ON \
@@ -20,9 +22,16 @@ cmake --build $BUILD_DIR
 
 "./${BUILD_DIR}/build/PolygonDust-gtest"
 
-if [ "$1" == 'xml' ] 
-then
-    cmake --build $BUILD_DIR --target polygondust-coverage-xml;
+if [ "$1" = 'xml' ]; then
+    cmake --build $BUILD_DIR --target polygondust-coverage-xml
+fi
+
+if [ "$1" = "html" ]; then
+    gcovr . --exclude "_deps"  --exclude "test"  --exclude "pyb_includes" --exclude "coverage_build/_deps" --exclude "src/main_pyb.cpp" -b --exclude-unreachable-branches --html-details ./${BUILD_DIR}/index.html
+fi
+
+if [ "$1" = "branch" ]; then
+    gcovr . --exclude "_deps"  --exclude "test"  --exclude "pyb_includes" --exclude "coverage_build/_deps" --exclude "src/main_pyb.cpp" -b --exclude-unreachable-branches
 else
-    cmake --build $BUILD_DIR --target polygondust-coverage;
+    gcovr . --exclude "_deps"  --exclude "test"  --exclude "pyb_includes" --exclude "coverage_build/_deps" --exclude "src/main_pyb.cpp"
 fi

@@ -1,7 +1,6 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include <cmath>
 #include <string>
 
 #define IS_NOT_EQUAL(x, y) (long long)((x + 1e-9) * 1e9) != (long long)((y + 1e-9) * 1e9)

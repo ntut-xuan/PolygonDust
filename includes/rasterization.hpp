@@ -23,7 +23,8 @@ private:
         intersectPoints.clear();
 
         std::set<double> intersectX;
-        for(Line line : *(polygon->GetLines())){
+        std::vector<Line> lines = *(polygon->GetLines());
+        for(Line line : lines){
             std::optional<Point> intersectPointOptional = line.GetYRayIntersectPoint(y);
             if(intersectPointOptional.has_value()){
                 Point intersectPoint = intersectPointOptional.value();

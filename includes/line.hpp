@@ -20,11 +20,19 @@ public:
     }
 
     Point GetMinimalPoint(){
-        return this->start <= this->end ? this->start : this->end;
+        if(this->start <= this->end){
+            return this->start;
+        }else{
+            return this->end;
+        }
     }
 
     Point GetMaximalPoint(){
-        return this->start >= this->end ? this->start : this->end;
+        if(this->start >= this->end){
+            return this->start;
+        }else{
+            return this->end;
+        }
     }
 
     bool operator==(const Line &other) const {
@@ -42,8 +50,9 @@ public:
         if(this->start.GetX() == this->end.GetX()){
             if(Between<double>(y, this->start.GetY(), this->end.GetY())){
                 return std::optional<Point>({this->start.GetX(), y});
+            }else{
+                return std::optional<Point>();
             }
-            return std::optional<Point>();
         }
         double m = (this->start.GetY() - this->end.GetY()) / (this->start.GetX() - this->end.GetX());
         double x = this->start.GetX() + (y - this->start.GetY()) / m;

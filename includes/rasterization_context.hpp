@@ -31,8 +31,10 @@ public:
         this->edge = edge;
     }
     void AddPolygon(Polygon polygon){
-        Rasterization rasterization(std::make_shared<Polygon>(polygon), edge);
-        polygons_cells.push_back(rasterization.GetCells());
+        std::shared_ptr<Polygon> polygon_ptr = std::make_shared<Polygon>(polygon);
+        Rasterization rasterization(polygon_ptr, edge);
+        std::shared_ptr<std::vector<Point>> cells = rasterization.GetCells();
+        polygons_cells.push_back(cells);
         UpdateMinMax(polygon);
     }
     double GetMinX(){

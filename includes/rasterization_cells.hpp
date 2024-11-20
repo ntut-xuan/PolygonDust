@@ -16,6 +16,9 @@ public:
     RasterizationCells(std::vector<Point> cells){
         cellSet = std::set<Point>(cells.begin(), cells.end());
     }
+    std::set<Point> GetCellSet(){
+        return cellSet;
+    }
     void Cut(RasterizationCells &other){
         std::vector<Point> tempSet;
         std::set<Point> other_points = other.GetCellSet();
@@ -43,12 +46,10 @@ public:
         cellSet = tempSet;
     }
     void Union(RasterizationCells &other){
-        for(Point point : other.GetCellSet()){
+        std::set<Point> cellset = other.GetCellSet();
+        for(Point point : cellset){
             cellSet.insert(point);
         }
-    }
-    std::set<Point> GetCellSet(){
-        return cellSet;
     }
 };
 
