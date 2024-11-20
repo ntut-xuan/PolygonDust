@@ -20,7 +20,7 @@ jobs:
       
       - name: Run Test
         run: |
-          docker run polygondust /bin/bash scripts/coverage.sh
+          docker run polygondust /bin/bash scripts/coverage.sh xml
 
       - name: Copy Coverage files
         run: |
