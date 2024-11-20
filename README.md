@@ -1,6 +1,6 @@
 # PolygonDust
 
-[![Build and Test](https://github.com/ntut-xuan/PolygonDust/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/ntut-xuan/PolygonDust/actions/workflows/build-and-test.yaml)
+[![Build and Test](https://github.com/ntut-xuan/PolygonDust/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/ntut-xuan/PolygonDust/actions/workflows/build-and-test.yaml) [![codecov](https://codecov.io/github/ntut-xuan/PolygonDust/graph/badge.svg?token=BBZ5OFOU8Y)](https://codecov.io/github/ntut-xuan/PolygonDust)
 
 ## Description
 
