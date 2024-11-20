@@ -61,10 +61,17 @@ if(COVERAGE)
     endif()
 
     append_coverage_compiler_flags()
+    
     setup_target_for_coverage_gcovr_html(
-            NAME polygondust-coverage
-            DEPENDENCIES PolygonDust
-            EXCLUDE ${COVERAGE_EXCLUDE}
+        NAME polygondust-coverage
+        DEPENDENCIES PolygonDust
+        EXCLUDE ${COVERAGE_EXCLUDE}
+    )
+
+    setup_target_for_coverage_gcovr_xml(
+        NAME polygondust-coverage-xml
+        DEPENDENCIES PolygonDust
+        EXCLUDE ${COVERAGE_EXCLUDE}
     )
 endif()
 

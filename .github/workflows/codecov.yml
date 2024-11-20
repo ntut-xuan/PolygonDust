@@ -1,0 +1,32 @@
+name: Run tests and upload coverage
+
+on: 
+  push
+
+jobs:
+  test:
+    name: Run tests and collect coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/checkout@v3
+      - name: Build Docker image
+        run: |
+          docker build -t polygondust Dockerfile.coverage
+      
+      - name: Run Test
+        run: |
+          docker run polygondust /bin/bash scripts/coverage.sh
+
+      - name: Copy Coverage files
+        run: |
+          docker cp polygondust:/coverage_build/polygondust-coverage-xml.xml coverage.xml
+
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
