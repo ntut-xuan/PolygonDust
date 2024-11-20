@@ -24,7 +24,7 @@ jobs:
       
       - name: Run Test
         run: |
-          docker run polygondust -v coverage_build:./coverage_build sh scripts/coverage.sh xml
+          docker run polygondust -v coverage_build:/coverage_build sh scripts/coverage.sh xml
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
