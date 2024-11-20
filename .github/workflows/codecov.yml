@@ -17,14 +17,14 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t polygondust -f ./Dockerfile.coverage .
+          
+      - name: Create coverage_build directory
+        run: |
+          mkdir coverage_build
       
       - name: Run Test
         run: |
-          docker run polygondust sh scripts/coverage.sh xml
-
-      - name: Copy Coverage files
-        run: |
-          docker cp polygondust:/coverage_build/polygondust-coverage-xml.xml coverage.xml
+          docker run polygondust -v coverage_build:./coverage_build sh scripts/coverage.sh xml
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
