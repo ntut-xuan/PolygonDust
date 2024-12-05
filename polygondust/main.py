@@ -10,6 +10,7 @@ from draw_util.rasterization_graphic_context import RasterizationGraphicContext,
 def initialize_argument_parser() -> ArgumentParser:
     parser: ArgumentParser = ArgumentParser()
     parser.add_argument("-i", "--input", help="Input a polygon with vertexs.", action='append', nargs='+')
+    parser.add_argument("-r", "--input_raw", help="Input a raw polygon with vertexs.", action='append', nargs='+')
     parser.add_argument("-s", "--input_shpfile", help="Input a shapefile with vertexs.", action='append', nargs='+')
     parser.add_argument("-p", "--particles", help="Particles size (in pixel).")
     parser.add_argument("-o", "--operation", help="Polygon Operation (Union=U, Intersect=I, Cut=C), e.g. \"UUIC\"")
@@ -19,7 +20,7 @@ def main():
     parser: ArgumentParser = initialize_argument_parser()
     args: Namespace = parser.parse_args()
 
-    if args.input is None and args.input_shpfile is None:
+    if args.input is None and args.input_shpfile is None and args.input_raw is None:
         print("Error: You need to input image file.")
         parser.print_help()
         return
@@ -51,6 +52,18 @@ def main():
             scene.parse()
 
             polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in scene.vertices])
+            polygons.append(polygon)
+    
+    if args.input_raw is not None:
+        for polygon_path in args.input_raw:
+            vertex_list = []
+            with open(polygon_path[0], "r") as file:
+                vertex_lines = file.read().split('\n')
+                for vertex_line in vertex_lines:
+                    if(len(vertex_line) == 0):
+                        continue
+                    vertex_list.append(Point(float(vertex_line.split(", ")[0]), float(vertex_line.split(", ")[1])))
+            polygon = Polygon(vertex_list)
             polygons.append(polygon)
         
     if args.input_shpfile is not None:
