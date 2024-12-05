@@ -4,7 +4,9 @@
 #include "point.hpp"
 #include "shared.hpp"
 
+#include <iostream>
 #include <optional>
+#include <string>
 
 class Line {
   private:
@@ -39,7 +41,7 @@ class Line {
 
     /**
      * This is a function for get the intersect point of two lines.
-     * These case will not present tf two line have 0 or more than 1 point
+     * These case will not present kf two line have 0 or more than 1 point
      * intersection.
      */
     std::optional<Point> GetYRayIntersectPoint(double y) {
@@ -62,6 +64,11 @@ class Line {
         return std::optional<Point>({x, y});
     }
 
+    /**
+     * This is a function for get the intersect point of two lines.
+     * These case will not present if two line have 0 or more than 1 point
+     * intersection.
+     */
     std::optional<Point> GetIntersectPoint(Line other) {
         double a1 = this->end.GetY() - this->start.GetY();
         double b1 = this->start.GetX() - this->end.GetX();
@@ -80,10 +87,18 @@ class Line {
         double x = (b2 * c1 - b1 * c2) / determine;
         double y = (a1 * c2 - a2 * c1) / determine;
 
-        if (std::min(this->start.GetX(), this->end.GetX()) <= x <= std::min(this->start.GetX(), this->end.GetX()) &&
-            std::min(this->start.GetY(), this->end.GetY()) <= y <= std::min(this->start.GetY(), this->end.GetY()) &&
-            std::min(other.start.GetX(), other.end.GetX()) <= x <= std::min(other.start.GetX(), other.end.GetX()) &&
-            std::min(other.start.GetY(), other.end.GetY()) <= y <= std::min(other.start.GetY(), other.end.GetY())) {
+        double this_min_x = std::min(this->start.GetX(), this->end.GetX());
+        double this_max_x = std::max(this->start.GetX(), this->end.GetX());
+        double this_min_y = std::min(this->start.GetY(), this->end.GetY());
+        double this_max_y = std::max(this->start.GetY(), this->end.GetY());
+
+        double other_min_x = std::min(other.start.GetX(), other.end.GetX());
+        double other_max_x = std::max(other.start.GetX(), other.end.GetX());
+        double other_min_y = std::min(other.start.GetY(), other.end.GetY());
+        double other_max_y = std::max(other.start.GetY(), other.end.GetY());
+
+        if (Between<double>(x, this_min_x, this_max_x) && Between<double>(y, this_min_y, this_max_y) &&
+            Between<double>(x, other_min_x, other_max_x) && Between<double>(y, other_min_y, other_max_y)) {
             return std::optional<Point>({x, y});
         }
 
