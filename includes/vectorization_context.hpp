@@ -25,13 +25,15 @@ class VectorizationContext {
         max_y = std::max(polygon.GetMaxY(), max_y);
     }
 
+  public:
     VectorizationContext(Polygon first_polygon) { polygon = std::make_shared<Polygon>(first_polygon); }
 
-  public:
-    void ClipPolygon(std::shared_ptr<Polygon> other) {
-        PolygonClipping clipping(polygon, other);
+    void ClipPolygon(Polygon other) {
+        PolygonClipping clipping(polygon, std::make_shared<Polygon>(other));
         polygon = std::make_shared<Polygon>(clipping.Produce());
     }
+
+    Polygon GetResult() { return *polygon.get(); }
 };
 
 #endif

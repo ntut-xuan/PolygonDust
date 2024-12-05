@@ -37,6 +37,8 @@ set(TESTS
     tests/cpp/ut_rasterization.cpp
     tests/cpp/ut_rasterization_context.cpp
     tests/cpp/ut_rasterization_cells.cpp
+    tests/cpp/ut_vectorization.cpp
+    tests/cpp/ut_polygon_clipping.cpp
 )
 
 option(COVERAGE "Enable coverage" OFF)
@@ -75,8 +77,8 @@ if(COVERAGE)
     )
 endif()
 
-include_directories(PolygonDust "${CMAKE_CURRENT_LIST_DIR}/includes")
-include_directories(PolygonDust "${CMAKE_CURRENT_LIST_DIR}/pyb_includes")
+include_directories(PolygonDust "${CMAKE_SOURCE_DIR}/includes")
+include_directories(PolygonDust "${CMAKE_SOURCE_DIR}/pyb_includes")
 
 add_library(PolygonDust MODULE "${SOURCES}" "${BINDINGS}")
 target_link_libraries(PolygonDust PRIVATE GTest::gtest_main pybind11::module)

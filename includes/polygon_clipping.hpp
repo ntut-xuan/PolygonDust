@@ -17,35 +17,6 @@ class PolygonClipping {
     std::vector<Point> clipping_list;
     std::map<Point, int> point_to_intersection_index;
 
-    void CreateVertexList(std::vector<Point> &list, std::shared_ptr<Polygon> major_polygon,
-                          std::shared_ptr<Polygon> minor_polygon) {
-        list.push_back(major_polygon->GetVertexs()->at(0));
-
-        size_t major_polygon_vertex_size = major_polygon->GetVertexs()->size();
-        size_t minor_polygon_vertex_size = minor_polygon->GetVertexs()->size();
-        for (size_t i = 0; i < major_polygon_vertex_size; i++) {
-            Point v11 = major_polygon->GetVertexs()->at((i) % major_polygon_vertex_size);
-            Point v12 = major_polygon->GetVertexs()->at((i + 1) % major_polygon_vertex_size);
-            Line line1(v11, v12);
-            for (size_t j = 0; j < minor_polygon_vertex_size; j++) {
-                Point v21 = minor_polygon->GetVertexs()->at((j) % minor_polygon_vertex_size);
-                Point v22 = minor_polygon->GetVertexs()->at((j + 1) % minor_polygon_vertex_size);
-                Line line2(v21, v22);
-
-                std::optional<Point> intersect_point_optional = line1.GetIntersectPoint(line2);
-
-                if (intersect_point_optional.has_value()) {
-                    Point intersect_point = intersect_point_optional.value();
-                    list.push_back(intersect_point);
-                    if (point_to_intersection_index.find(intersect_point) == point_to_intersection_index.end()) {
-                        point_to_intersection_index[intersect_point] = point_to_intersection_index.size();
-                    }
-                }
-            }
-            list.push_back(v11);
-        }
-    }
-
     std::optional<int> GetIntersectionPointIndex(Point point) {
         auto point_iter = point_to_intersection_index.find(point);
         if (point_iter == point_to_intersection_index.end()) {
@@ -116,6 +87,38 @@ class PolygonClipping {
         }
 
         return Polygon(clip_vertexes);
+    }
+
+    void CreateVertexList(std::vector<Point> &list, std::shared_ptr<Polygon> major_polygon,
+                          std::shared_ptr<Polygon> minor_polygon) {
+        list.push_back(major_polygon->GetVertexs()->at(0));
+
+        size_t major_polygon_vertex_size = major_polygon->GetVertexs()->size();
+        size_t minor_polygon_vertex_size = minor_polygon->GetVertexs()->size();
+        for (size_t i = 0; i < major_polygon_vertex_size; i++) {
+            Point v11 = major_polygon->GetVertexs()->at((i) % major_polygon_vertex_size);
+            Point v12 = major_polygon->GetVertexs()->at((i + 1) % major_polygon_vertex_size);
+            Line line1(v11, v12);
+            for (size_t j = 0; j < minor_polygon_vertex_size; j++) {
+                Point v21 = minor_polygon->GetVertexs()->at((j) % minor_polygon_vertex_size);
+                Point v22 = minor_polygon->GetVertexs()->at((j + 1) % minor_polygon_vertex_size);
+                Line line2(v21, v22);
+
+                std::optional<Point> intersect_point_optional = line1.GetIntersectPoint(line2);
+
+                if (intersect_point_optional.has_value()) {
+                    Point intersect_point = intersect_point_optional.value();
+                    list.push_back(intersect_point);
+                    if (point_to_intersection_index.find(intersect_point) == point_to_intersection_index.end()) {
+                        point_to_intersection_index[intersect_point] = point_to_intersection_index.size();
+                    }
+                }
+            }
+
+            if (i != major_polygon_vertex_size - 1) {
+                list.push_back(v12);
+            }
+        }
     }
 };
 

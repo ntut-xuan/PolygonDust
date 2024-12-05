@@ -5,6 +5,7 @@ import pywavefront
 import fiona
 
 from PolygonDust import Polygon, Point, RasterizationContext
+from vectorization.vectorization_context import vectorization
 from draw_util.rasterization_graphic_context import RasterizationGraphicContext, RasterizationGraphicContextBoundary
 
 def initialize_argument_parser() -> ArgumentParser:
@@ -14,6 +15,7 @@ def initialize_argument_parser() -> ArgumentParser:
     parser.add_argument("-s", "--input_shpfile", help="Input a shapefile with vertexs.", action='append', nargs='+')
     parser.add_argument("-p", "--particles", help="Particles size (in pixel).")
     parser.add_argument("-o", "--operation", help="Polygon Operation (Union=U, Intersect=I, Cut=C), e.g. \"UUIC\"")
+    parser.add_argument("-v", "--vector", help="Use vector clipping", action='store_true')
     return parser
 
 def main():
@@ -25,7 +27,7 @@ def main():
         parser.print_help()
         return
 
-    if args.particles is None:
+    if args.vector is None and args.particles is None:
         print("Error: You need to input particles size.")
         parser.print_help()
         return
@@ -42,8 +44,6 @@ def main():
     print("Particles edge:", args.particles, "m")
     print("Operation:", args.operation)
 
-    edge: float = float(args.particles)
-    operation = str(args.operation)
     polygons: list[Polygon] = []
 
     if args.input is not None:
@@ -87,6 +87,13 @@ def main():
                             print(f"Shapefile {shapefile_path} have {len(coordinates)} vertexes.")
                             polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in coordinates])
                             polygons.append(polygon)
+
+    if args.vector:
+        vectorization(polygons)
+        return 0
+    
+    edge: float = float(args.particles)
+    operation = str(args.operation)
 
     with RasterizationContext(edge) as raster_context:
         for polygon in polygons:
