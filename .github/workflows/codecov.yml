@@ -1,7 +1,6 @@
 name: Run tests and upload coverage
 
-on: 
-  push
+on: push
 
 jobs:
   test:
@@ -17,11 +16,11 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t polygondust -f ./Dockerfile.coverage .
-          
+
       - name: Create coverage_build directory
         run: |
           mkdir coverage_build
-      
+
       - name: Run Test
         run: |
           docker run -v ./coverage_build/:/polygondust/coverage_build polygondust sh scripts/coverage.sh xml
@@ -30,5 +29,5 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true
-          files: ./coverage_build/polygondust-coverage-xml.xml
+          files: ./coverage_build/coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
