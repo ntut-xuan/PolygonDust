@@ -27,7 +27,7 @@ if [ "$1" = 'xml' ]; then
 fi
 
 if [ "$1" = "html" ]; then
-    gcovr . --exclude "_deps"  --exclude "test"  --exclude "pyb_includes" --exclude "coverage_build/_deps" --exclude "build/_deps" --exclude "src/main_pyb.cpp" -b --exclude-unreachable-branches --html-details ./${BUILD_DIR}/index.html
+    gcovr . --exclude "_deps"  --exclude "test"  --exclude "pyb_includes" --exclude "coverage_build/_deps" --exclude "build/_deps" --exclude "src/main_pyb.cpp" -b --exclude-unreachable-branches --exclude-throw-branches  --html-details ./${BUILD_DIR}/index.html
 fi
 
 if [ "$1" = "branch" ]; then

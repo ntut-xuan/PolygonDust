@@ -5,9 +5,12 @@
 #include "polygon.hpp"
 #include <algorithm>
 #include <cstddef>
+#include <exception>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <optional>
+#include <stdexcept>
 
 class PolygonClipping {
   private:
@@ -26,41 +29,41 @@ class PolygonClipping {
         }
     }
 
+    int FindIntersectIndex(std::optional<int> subject_intersect_index) {
+        int result = 0;
+        std::optional<int> clipping_intersect_index = GetIntersectionPointIndex(clipping_list[result]);
+        while (!(subject_intersect_index.value() == clipping_intersect_index.value_or(-1))) {
+            result += 1;
+            clipping_intersect_index = GetIntersectionPointIndex(clipping_list[result]);
+        }
+        return result;
+    }
+
     void ProcessIntersectPoint(std::vector<Point> &clip_vertexes, size_t &subject_list_index) {
-        int clip_list_intersect_start_index = 0;
         int clip_list_intersect_end_id = 0;
         size_t subject_list_size = subject_list.size();
         size_t clipping_list_size = clipping_list.size();
 
         std::optional<int> subject_intersect_index = GetIntersectionPointIndex(subject_list[subject_list_index]);
+        int clip_list_intersect_start_index = FindIntersectIndex(subject_intersect_index);
 
-        for (size_t j = 0; j < clipping_list.size(); j++) {
-            std::optional<int> clipping_intersect_index = GetIntersectionPointIndex(clipping_list[j]);
-            if (subject_intersect_index == clipping_intersect_index) {
-                clip_list_intersect_start_index = j;
-                break;
-            }
-        }
-
-        for (size_t j = 0; j < clipping_list.size(); j++) {
+        std::optional<int> intersect_index = std::optional<int>();
+        for (size_t j = 0; !(intersect_index.has_value()); j++) {
             int query_index = (clip_list_intersect_start_index + j + 1) % clipping_list_size;
             clip_vertexes.push_back(clipping_list[query_index]);
 
-            std::optional<int> intersect_index = GetIntersectionPointIndex(clipping_list[query_index]);
+            intersect_index = GetIntersectionPointIndex(clipping_list[query_index]);
 
             if (intersect_index.has_value()) {
                 clip_list_intersect_end_id = intersect_index.value();
-                break;
             }
         }
 
-        for (size_t j = 0; j < subject_list.size(); j++) {
+        intersect_index = std::optional<int>();
+        while (!(intersect_index.has_value() && intersect_index.value() == clip_list_intersect_end_id)) {
             subject_list_index += 1;
             int query_index = (subject_list_index) % subject_list_size;
-            std::optional<int> intersect_index = GetIntersectionPointIndex(subject_list[query_index]);
-            if (intersect_index.has_value() && intersect_index.value() == clip_list_intersect_end_id) {
-                break;
-            }
+            intersect_index = GetIntersectionPointIndex(subject_list[query_index]);
         }
     }
 
