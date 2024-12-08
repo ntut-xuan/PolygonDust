@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 #include <set>
+#include <stdexcept>
 #include <vector>
 
 class Polygon {
@@ -17,6 +18,7 @@ class Polygon {
     std::shared_ptr<std::vector<Point>> vertexs;
     std::shared_ptr<std::vector<Line>> lines;
     std::shared_ptr<std::set<Point>> localminmaxs;
+    bool clockwise;
     double min_x = INT_MAX, min_y = INT_MAX, max_x = INT_MIN, max_y = INT_MIN;
     void ConstructLocalMinMaxPoints() {
         for (size_t i = 0; i < vertexs->size(); i++) {
@@ -36,6 +38,19 @@ class Polygon {
             lines->push_back(Line(startPoint, endPoint));
         }
     }
+    void DetermineClockwise() {
+        double a = 0;
+        for (size_t i = 0; i < vertexs->size(); i++) {
+            double x1 = vertexs->at(i).GetX();
+            double y1 = vertexs->at((i + 1) % vertexs->size()).GetX();
+            double x2 = vertexs->at(i).GetY();
+            double y2 = vertexs->at((i + 1) % vertexs->size()).GetY();
+
+            a += (x1 * y2 + x2 * y1);
+        }
+        a *= 0.5;
+        clockwise = (a < 0);
+    }
 
   public:
     Polygon() = default;
@@ -51,6 +66,7 @@ class Polygon {
         }
         ConstructLines();
         ConstructLocalMinMaxPoints();
+        DetermineClockwise();
     }
     ~Polygon() = default;
     std::shared_ptr<std::vector<Point>> GetVertexs();
@@ -63,6 +79,7 @@ class Polygon {
     double GetMaxX() { return max_x; }
     double GetMaxY() { return max_y; }
     bool IsLocalMinMaxPoint(Point point);
+    bool IsClockwise() { return clockwise; }
 };
 
 #endif

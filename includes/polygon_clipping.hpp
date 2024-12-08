@@ -3,6 +3,7 @@
 
 #include "point.hpp"
 #include "polygon.hpp"
+#include "shared.hpp"
 #include <algorithm>
 #include <cstddef>
 #include <exception>
@@ -11,6 +12,8 @@
 #include <memory>
 #include <optional>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 class PolygonClipping {
   private:
@@ -32,7 +35,8 @@ class PolygonClipping {
     int FindIntersectIndex(std::optional<int> subject_intersect_index) {
         int result = 0;
         std::optional<int> clipping_intersect_index = GetIntersectionPointIndex(clipping_list[result]);
-        while (!(subject_intersect_index.value() == clipping_intersect_index.value_or(-1))) {
+        while (!(clipping_intersect_index.has_value() &&
+                 subject_intersect_index.value() == clipping_intersect_index.value())) {
             result += 1;
             clipping_intersect_index = GetIntersectionPointIndex(clipping_list[result]);
         }
@@ -62,6 +66,7 @@ class PolygonClipping {
         intersect_index = std::optional<int>();
         while (!(intersect_index.has_value() && intersect_index.value() == clip_list_intersect_end_id)) {
             subject_list_index += 1;
+            subject_list_index %= subject_list_size;
             int query_index = (subject_list_index) % subject_list_size;
             intersect_index = GetIntersectionPointIndex(subject_list[query_index]);
         }
@@ -75,21 +80,44 @@ class PolygonClipping {
         CreateVertexList(subject_list, subjectPolygon, clippingPolygon);
         CreateVertexList(clipping_list, clippingPolygon, subjectPolygon);
 
-        // Assume all polygon order counterwise.
-        std::reverse(clipping_list.begin(), clipping_list.end());
+        // subjectPolygon clockwise should different on clippingPolygon.
+        if ((subjectPolygon->IsClockwise() ^ clippingPolygon->IsClockwise()) == 0) {
+            std::reverse(clipping_list.begin(), clipping_list.end());
+        }
 
         std::vector<Point> clip_vertexes;
 
+        int subject_start_node = 0;
+
         for (size_t i = 0; i < subject_list.size(); i++) {
-            clip_vertexes.push_back(subject_list[i]);
-            std::optional<int> subject_intersect_index = GetIntersectionPointIndex(subject_list[i]);
+            Point point = subject_list[i];
+            if (!(Between<double>(point.GetX(), clippingPolygon->GetMinX(), clippingPolygon->GetMaxX()) &&
+                  Between<double>(point.GetY(), clippingPolygon->GetMinY(), clippingPolygon->GetMaxY()))) {
+                subject_start_node = i;
+                break;
+            }
+        }
+
+        for (size_t i = subject_start_node, j = 0; j < subject_list.size(); i++, j++) {
+            size_t query_node_index = (i) % (subject_list.size());
+            clip_vertexes.push_back(subject_list[query_node_index]);
+            std::optional<int> subject_intersect_index = GetIntersectionPointIndex(subject_list[query_node_index]);
 
             if (subject_intersect_index.has_value()) {
                 ProcessIntersectPoint(clip_vertexes, i);
             }
         }
 
-        return Polygon(clip_vertexes);
+        int duplicate_index = clip_vertexes.size();
+
+        for (size_t i = 1; i < clip_vertexes.size(); i++) {
+            if (clip_vertexes[0] == clip_vertexes[i]) {
+                duplicate_index = i;
+                break;
+            }
+        }
+
+        return Polygon(std::vector<Point>(clip_vertexes.begin(), clip_vertexes.begin() + duplicate_index));
     }
 
     void CreateVertexList(std::vector<Point> &list, std::shared_ptr<Polygon> major_polygon,

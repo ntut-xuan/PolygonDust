@@ -23,11 +23,11 @@ cmake --build $BUILD_DIR
 "./${BUILD_DIR}/build/PolygonDust-gtest"
 
 if [ "$1" = 'xml' ]; then
-    gcovr . --exclude "_deps"  --exclude "test"  --exclude "pyb_includes" --exclude "coverage_build/_deps" --exclude "build/_deps" --exclude "src/main_pyb.cpp" -b --exclude-unreachable-branches --xml -o ./${BUILD_DIR}/coverage.xml
+    gcovr . --exclude "_deps"  --exclude "test"  --exclude "pyb_includes" --exclude "coverage_build/_deps" --exclude "build/_deps" --exclude "src/main_pyb.cpp" -b --exclude-unreachable-branches --exclude-throw-branches --xml -o ./${BUILD_DIR}/coverage.xml
 fi
 
 if [ "$1" = "html" ]; then
-    gcovr . --exclude "_deps"  --exclude "test"  --exclude "pyb_includes" --exclude "coverage_build/_deps" --exclude "build/_deps" --exclude "src/main_pyb.cpp" -b --exclude-unreachable-branches --exclude-throw-branches  --html-details ./${BUILD_DIR}/index.html
+    gcovr . --exclude "_deps"  --exclude "test"  --exclude "pyb_includes" --exclude "coverage_build/_deps" --exclude "build/_deps" --exclude "src/main_pyb.cpp" -b --exclude-unreachable-branches --exclude-throw-branches --html-details ./${BUILD_DIR}/index.html
 fi
 
 if [ "$1" = "branch" ]; then

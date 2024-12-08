@@ -16,6 +16,7 @@ def initialize_argument_parser() -> ArgumentParser:
     parser.add_argument("-p", "--particles", help="Particles size (in pixel).")
     parser.add_argument("-o", "--operation", help="Polygon Operation (Union=U, Intersect=I, Cut=C), e.g. \"UUIC\"")
     parser.add_argument("-v", "--vector", help="Use vector clipping", action='store_true')
+    parser.add_argument("--no-show", help="Don't show the polygon presentation", action='store_true')
     return parser
 
 def main():
@@ -58,6 +59,7 @@ def main():
         for polygon_path in args.input_raw:
             vertex_list = []
             with open(polygon_path[0], "r") as file:
+                print(polygon_path[0])
                 vertex_lines = file.read().split('\n')
                 for vertex_line in vertex_lines:
                     if(len(vertex_line) == 0):
@@ -89,7 +91,7 @@ def main():
                             polygons.append(polygon)
 
     if args.vector:
-        vectorization(polygons)
+        vectorization(polygons, args.no_show)
         return 0
     
     edge: float = float(args.particles)
