@@ -4,6 +4,7 @@
 #include "point.hpp"
 #include "shared.hpp"
 
+#include <cmath>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -97,8 +98,10 @@ class Line {
         double other_min_y = std::min(other.start.GetY(), other.end.GetY());
         double other_max_y = std::max(other.start.GetY(), other.end.GetY());
 
-        if (Between<double>(x, this_min_x, this_max_x) && Between<double>(y, this_min_y, this_max_y) &&
-            Between<double>(x, other_min_x, other_max_x) && Between<double>(y, other_min_y, other_max_y)) {
+        if (Between<double>(std::floor(x * 1e6), std::floor(this_min_x * 1e6), std::floor(this_max_x * 1e6)) &&
+            Between<double>(std::floor(y * 1e6), std::floor(this_min_y * 1e6), std::floor(this_max_y * 1e6)) &&
+            Between<double>(std::floor(x * 1e6), std::floor(other_min_x * 1e6), std::floor(other_max_x * 1e6)) &&
+            Between<double>(std::floor(y * 1e6), std::floor(other_min_y * 1e6), std::floor(other_max_y * 1e6))) {
             return std::optional<Point>({x, y});
         }
 

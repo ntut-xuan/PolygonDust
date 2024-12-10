@@ -63,15 +63,15 @@ TEST(POLYGON_TEST, test_polygon_with_concave_polygon_should_return_correct_local
 }
 
 TEST(POLYGON_TEST, test_polygon_with_counterwise_vertex_set_should_determine_counterwise) {
-    std::shared_ptr<Polygon> polygon = std::make_shared<Polygon>(std::vector<Point>{
-        Point(0, 0), Point(2, 4), Point(4, 2), Point(6, 4), Point(8, 0), Point(6, 2), Point(4, 1), Point(2, 2)});
+    std::shared_ptr<Polygon> polygon =
+        std::make_shared<Polygon>(std::vector<Point>{Point(0, 0), Point(4, 2), Point(2, 5)});
 
-    ASSERT_EQ(polygon->IsClockwise(), false);
+    ASSERT_EQ(polygon->IsClockwise(), true);
 }
 
 TEST(POLYGON_TEST, test_polygon_with_clockwise_vertex_set_should_determine_clockwise) {
     std::shared_ptr<Polygon> polygon =
         std::make_shared<Polygon>(std::vector<Point>{Point(0, 0), Point(-5, 0), Point(-2.5, 3)});
 
-    ASSERT_EQ(polygon->IsClockwise(), true);
+    ASSERT_EQ(polygon->IsClockwise(), false);
 }

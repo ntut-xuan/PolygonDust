@@ -10,6 +10,8 @@ def vectorization(polygons: list[Polygon], no_show=False):
 
         polygon_result = context.GetResult()
 
+        print(len(polygon.GetVertex()))
+
         print("Area", polygon_result.GetArea())
 
         if not no_show:

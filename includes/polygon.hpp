@@ -10,7 +10,6 @@
 #include <iostream>
 #include <memory>
 #include <set>
-#include <stdexcept>
 #include <vector>
 
 class Polygon {
@@ -42,14 +41,13 @@ class Polygon {
         double a = 0;
         for (size_t i = 0; i < vertexs->size(); i++) {
             double x1 = vertexs->at(i).GetX();
-            double y1 = vertexs->at((i + 1) % vertexs->size()).GetX();
-            double x2 = vertexs->at(i).GetY();
+            double y1 = vertexs->at(i).GetY();
+            double x2 = vertexs->at((i + 1) % vertexs->size()).GetX();
             double y2 = vertexs->at((i + 1) % vertexs->size()).GetY();
-
-            a += (x1 * y2 + x2 * y1);
+            a += (x1 * y2 - x2 * y1);
         }
         a *= 0.5;
-        clockwise = (a < 0);
+        clockwise = (a > 0);
     }
 
   public:
