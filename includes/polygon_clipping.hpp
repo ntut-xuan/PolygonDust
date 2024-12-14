@@ -6,13 +6,10 @@
 #include "shared.hpp"
 #include <algorithm>
 #include <cstddef>
-#include <exception>
 #include <iostream>
 #include <map>
 #include <memory>
 #include <optional>
-#include <stdexcept>
-#include <string>
 #include <vector>
 
 class PolygonClipping {
@@ -47,28 +44,35 @@ class PolygonClipping {
         int clip_list_intersect_end_id = 0;
         size_t subject_list_size = subject_list.size();
         size_t clipping_list_size = clipping_list.size();
+        size_t query_node_index = (subject_list_index) % (subject_list.size());
 
-        std::optional<int> subject_intersect_index = GetIntersectionPointIndex(subject_list[subject_list_index]);
+        std::optional<int> subject_intersect_index = GetIntersectionPointIndex(subject_list[query_node_index]);
+
         int clip_list_intersect_start_index = FindIntersectIndex(subject_intersect_index);
 
-        std::optional<int> intersect_index = std::optional<int>();
-        for (size_t j = 0; !(intersect_index.has_value()); j++) {
+        for (size_t j = 0; j < clipping_list_size; j++) {
             int query_index = (clip_list_intersect_start_index + j + 1) % clipping_list_size;
             clip_vertexes.push_back(clipping_list[query_index]);
 
-            intersect_index = GetIntersectionPointIndex(clipping_list[query_index]);
+            std::optional<int> intersect_index = GetIntersectionPointIndex(clipping_list[query_index]);
 
             if (intersect_index.has_value()) {
+                std::cout << "Found next intersect point." << std::endl;
                 clip_list_intersect_end_id = intersect_index.value();
+                break;
             }
         }
 
-        intersect_index = std::optional<int>();
-        while (!(intersect_index.has_value() && intersect_index.value() == clip_list_intersect_end_id)) {
+        for (size_t j = 0; j < subject_list_size; j++) {
             subject_list_index += 1;
             subject_list_index %= subject_list_size;
             int query_index = (subject_list_index) % subject_list_size;
-            intersect_index = GetIntersectionPointIndex(subject_list[query_index]);
+            std::optional<int> intersect_index = GetIntersectionPointIndex(subject_list[query_index]);
+
+            if (intersect_index.has_value() && intersect_index.value() == clip_list_intersect_end_id) {
+                std::cout << "Move to next subject list node." << std::endl;
+                break;
+            }
         }
     }
 
@@ -77,6 +81,9 @@ class PolygonClipping {
         : subjectPolygon(subjectPolygon), clippingPolygon(clippingPolygon) {}
 
     Polygon Produce() {
+
+        std::cout << "Process Create Vertex List." << std::endl;
+
         CreateVertexList(subject_list, subjectPolygon, clippingPolygon);
         CreateVertexList(clipping_list, clippingPolygon, subjectPolygon);
 
@@ -85,7 +92,11 @@ class PolygonClipping {
             std::reverse(clipping_list.begin(), clipping_list.end());
         }
 
+        std::cout << "Process Polygon." << std::endl;
+
         std::vector<Point> clip_vertexes;
+
+        std::cout << "Finding Start Node." << std::endl;
 
         int subject_start_node = 0;
 
@@ -98,12 +109,16 @@ class PolygonClipping {
             }
         }
 
+        std::cout << "Found start node, start rounding." << std::endl;
+
         for (size_t i = subject_start_node, j = 0; j < subject_list.size(); i++, j++) {
             size_t query_node_index = (i) % (subject_list.size());
             clip_vertexes.push_back(subject_list[query_node_index]);
+
             std::optional<int> subject_intersect_index = GetIntersectionPointIndex(subject_list[query_node_index]);
 
             if (subject_intersect_index.has_value()) {
+                std::cout << "Found intersect point, switch list into clip_vertexes." << std::endl;
                 ProcessIntersectPoint(clip_vertexes, i);
             }
         }
@@ -138,6 +153,7 @@ class PolygonClipping {
                 std::optional<Point> intersect_point_optional = line1.GetIntersectPoint(line2);
 
                 if (intersect_point_optional.has_value()) {
+                    std::cout << "Create Intersect Point " << intersect_point_optional.value().ToString() << std::endl;
                     Point intersect_point = intersect_point_optional.value();
                     list.push_back(intersect_point);
                     if (point_to_intersection_index.find(intersect_point) == point_to_intersection_index.end()) {
