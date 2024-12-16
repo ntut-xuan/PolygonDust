@@ -2,6 +2,8 @@
 
 [![Build and Test](https://github.com/ntut-xuan/PolygonDust/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/ntut-xuan/PolygonDust/actions/workflows/build-and-test.yaml) [![codecov](https://codecov.io/github/ntut-xuan/PolygonDust/graph/badge.svg?token=BBZ5OFOU8Y)](https://codecov.io/github/ntut-xuan/PolygonDust)
 
+![未命名绘图 drawio](https://github.com/user-attachments/assets/56003f8d-1929-4cd1-ae04-4d9b6e151881)
+
 ## Description
 
 PolygonDust is an application to measure the area size of polygon with support complex polygon overlap analysis. You can cut, union, or intersect any two polygon to make a complex ploygon.
