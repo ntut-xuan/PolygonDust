@@ -17,7 +17,7 @@ double Polygon::GetArea() {
     return 0.5 * abs(v);
 }
 
-std::shared_ptr<std::vector<Point>> Polygon::GetVertexs() { return this->vertexs; }
+std::shared_ptr<std::vector<Point>> Polygon::GetVertexs() const { return this->vertexs; }
 
 std::vector<Point> Polygon::GetVertexsVector() { return *this->vertexs; }
 
