@@ -15,6 +15,7 @@
 class Polygon {
   private:
     std::shared_ptr<std::vector<Point>> vertexs;
+    std::vector<Polygon> holes;
     std::shared_ptr<std::vector<Line>> lines;
     std::shared_ptr<std::set<Point>> localminmaxs;
     bool clockwise;
@@ -56,6 +57,7 @@ class Polygon {
         this->vertexs = std::make_shared<std::vector<Point>>(vertexs.begin(), vertexs.end());
         this->lines = std::make_shared<std::vector<Line>>();
         this->localminmaxs = std::make_shared<std::set<Point>>();
+        this->holes = std::vector<Polygon>();
         for (Point p : vertexs) {
             min_x = std::min(p.GetX(), min_x);
             max_x = std::max(p.GetX(), max_x);
@@ -66,8 +68,13 @@ class Polygon {
         ConstructLocalMinMaxPoints();
         DetermineClockwise();
     }
+    Polygon(std::vector<Point> outbound_vertexs, std::vector<Polygon> holes) : Polygon(outbound_vertexs) {
+        this->holes = holes;
+    }
+    bool operator==(const Polygon &other) const { return this->GetVertexs() == other.GetVertexs(); }
     ~Polygon() = default;
-    std::shared_ptr<std::vector<Point>> GetVertexs();
+    std::shared_ptr<std::vector<Point>> GetVertexs() const;
+    std::vector<Polygon> GetHoles() { return this->holes; };
     std::vector<Point> GetVertexsVector();
     std::shared_ptr<std::vector<Point>> GetLocalMinMaxVertexs();
     std::shared_ptr<std::vector<Line>> GetLines();
