@@ -5,12 +5,15 @@ import pywavefront
 import fiona
 
 from PolygonDust import Polygon, Point, RasterizationContext
-from vectorization.vectorization_context import vectorization
+from data_process.waveform_input import WaveformInput
+from data_process.raw_input import RawInput
+from data_process.shapefile_input import ShapefileInput
 from draw_util.rasterization_graphic_context import RasterizationGraphicContext, RasterizationGraphicContextBoundary
+from vectorization.vectorization_context import vectorization
 
 def initialize_argument_parser() -> ArgumentParser:
     parser: ArgumentParser = ArgumentParser()
-    parser.add_argument("-i", "--input", help="Input a polygon with vertexs.", action='append', nargs='+')
+    parser.add_argument("-i", "--input_waveform", help="Input a polygon with vertexs.", action='append', nargs='+')
     parser.add_argument("-r", "--input_raw", help="Input a raw polygon with vertexs.", action='append', nargs='+')
     parser.add_argument("-s", "--input_shpfile", help="Input a shapefile with vertexs.", action='append', nargs='+')
     parser.add_argument("-p", "--particles", help="Particles size (in pixel).")
@@ -23,7 +26,7 @@ def main():
     parser: ArgumentParser = initialize_argument_parser()
     args: Namespace = parser.parse_args()
 
-    if args.input is None and args.input_shpfile is None and args.input_raw is None:
+    if args.input_waveform is None and args.input_shpfile is None and args.input_raw is None:
         print("Error: You need to input image file.")
         parser.print_help()
         return
@@ -36,8 +39,8 @@ def main():
     # print("Input polygons:", len(0 if args.input is None else len(args.input)))
     # print("Input shapefiles:", len(0 if args.input_shpfile is None else len(args.input_shpfile)))
 
-    if args.input is not None:
-        print("Input vertexs:", args.input)
+    if args.input_waveform is not None:
+        print("Input vertexs:", args.input_waveform)
     
     if args.input_shpfile is not None:
         print("Input shapefile vertexs:", args.input_shpfile)
@@ -47,48 +50,9 @@ def main():
 
     polygons: list[Polygon] = []
 
-    if args.input is not None:
-        for polygon_path in args.input:
-            scene: pywavefront.Wavefront = pywavefront.Wavefront(polygon_path[0], strict=True, encoding="utf-8", parse=False)
-            scene.parse()
-
-            polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in scene.vertices])
-            polygons.append(polygon)
-    
-    if args.input_raw is not None:
-        for polygon_path in args.input_raw:
-            vertex_list = []
-            with open(polygon_path[0], "r") as file:
-                print(polygon_path[0])
-                vertex_lines = file.read().split('\n')
-                for vertex_line in vertex_lines:
-                    if(len(vertex_line) == 0):
-                        continue
-                    vertex_list.append(Point(float(vertex_line.split(", ")[0]), float(vertex_line.split(", ")[1])))
-            polygon = Polygon(vertex_list)
-            polygons.append(polygon)
-        
-    if args.input_shpfile is not None:
-        for shapefile_path in args.input_shpfile:
-            with fiona.open(shapefile_path[0], "r") as shapefile:
-                for feature in shapefile:
-                    geometry = feature['geometry']
-                
-                    print(geometry)
-
-                    # Ensure it's a polygon
-                    if geometry['type'] == 'Polygon':
-                        coordinates = geometry['coordinates'][0]  # Outer boundary
-                        print(f"Shapefile {shapefile_path} have {len(coordinates)} vertexes.")
-                        polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in coordinates])
-                        polygons.append(polygon)
-
-                    if geometry['type'] == "MultiPolygon":
-                        for i in range(len(geometry['coordinates'])):
-                            coordinates = geometry['coordinates'][i][0]
-                            print(f"Shapefile {shapefile_path} have {len(coordinates)} vertexes.")
-                            polygon = Polygon([Point(vertice[0], vertice[1]) for vertice in coordinates])
-                            polygons.append(polygon)
+    polygons.extend(WaveformInput(args.input_waveform).get_result())
+    polygons.extend(RawInput(args.input_raw).get_result())
+    polygons.extend(ShapefileInput(args.input_shpfile).get_result())
 
     if args.vector:
         vectorization(polygons, args.no_show)
