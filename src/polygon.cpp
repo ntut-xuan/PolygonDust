@@ -55,7 +55,3 @@ bool Polygon::IsPointInPolygon(Point point) {
     }
     return DeterminePointInPolygonByXSet(x_set, x);
 }
-
-bool Polygon::IsVertexInPolygon(Point point) {
-    return std::find(vertexs->begin(), vertexs->end(), point) != vertexs->end();
-}

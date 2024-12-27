@@ -86,6 +86,5 @@ class Polygon {
     bool IsLocalMinMaxPoint(Point point);
     bool IsClockwise() { return clockwise; }
     bool IsPointInPolygon(Point point);
-    bool IsVertexInPolygon(Point point);
 };
 #endif
