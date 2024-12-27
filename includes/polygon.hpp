@@ -85,6 +85,7 @@ class Polygon {
     double GetMaxY() { return max_y; }
     bool IsLocalMinMaxPoint(Point point);
     bool IsClockwise() { return clockwise; }
+    bool IsPointInPolygon(Point point);
+    bool IsVertexInPolygon(Point point);
 };
-
 #endif

@@ -50,7 +50,8 @@ class Line {
             return std::optional<Point>();
         }
         if (this->start.GetX() == this->end.GetX()) {
-            if (Between<double>(y, this->start.GetY(), this->end.GetY())) {
+            if (Between<double>(y, std::min(this->start.GetY(), this->end.GetY()),
+                                std::max(this->start.GetY(), this->end.GetY()))) {
                 return std::optional<Point>({this->start.GetX(), y});
             } else {
                 return std::optional<Point>();
