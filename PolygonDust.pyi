@@ -130,7 +130,11 @@ class VectorizationContext:
         """
         Clip polygon
         """
-    def GetResult(self) -> Polygon:
+    def GetIntersectPoint(self) -> list[Point]:
+        """
+        Get intersect points
+        """
+    def GetResult(self) -> list[Polygon]:
         """
         Get clipped polygon result
         """

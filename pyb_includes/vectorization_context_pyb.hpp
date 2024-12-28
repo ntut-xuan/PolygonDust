@@ -14,6 +14,7 @@ inline void BindVectorizationContextClass(::pybind11::module_ &m) {
         .def(py::init<Polygon>())
         .def("ClipPolygon", &VectorizationContext::ClipPolygon, "Clip polygon")
         .def("GetResult", &VectorizationContext::GetResult, "Get clipped polygon result")
+        .def("GetIntersectPoint", &VectorizationContext::GetIntersectPoints, "Get intersect points")
         .def("__enter__", [](VectorizationContext &self) { return &self; })
         .def("__exit__",
              [](VectorizationContext, py::object, py::object, py::object) {
