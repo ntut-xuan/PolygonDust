@@ -57,7 +57,7 @@ class Line {
         if (this->start.GetX() == this->end.GetX()) {
             if (Between<double>(y, std::min(this->start.GetY(), this->end.GetY()),
                                 std::max(this->start.GetY(), this->end.GetY()))) {
-                return std::optional<Point>({this->start.GetX(), y});
+                return std::optional<Point>({this->start.GetX() + 1e-10, y + 1e-10});
             } else {
                 return std::optional<Point>();
             }
@@ -68,7 +68,7 @@ class Line {
                      std::max(this->start.GetX(), this->end.GetX()))) {
             return std::optional<Point>();
         }
-        return std::optional<Point>({x, y});
+        return std::optional<Point>({x + 1e-10, y + 1e-10});
     }
 
     std::optional<std::pair<Point, Point>> GetYRayHorizontalLineIntersectPoint(double y) {

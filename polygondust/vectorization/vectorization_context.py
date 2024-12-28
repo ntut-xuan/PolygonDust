@@ -23,7 +23,7 @@ def vectorization(polygons: list[Polygon], no_show=False):
             ax.add_patch(cut_polygon)
             
             for polygon in polygon_result:
-                result_polygon: PLTPloygon = PLTPloygon([(point.GetX(), point.GetY()) for point in polygon.GetVertex()], color="yellow")
+                result_polygon: PLTPloygon = PLTPloygon([(point.GetX(), point.GetY()) for point in polygon.GetVertex()], color="orange")
                 ax.add_patch(result_polygon)
                 
             for intersect_point in context.GetIntersectPoint():

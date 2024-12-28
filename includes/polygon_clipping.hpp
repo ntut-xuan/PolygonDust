@@ -8,6 +8,7 @@
 #include "vectorization_result.hpp"
 #include <algorithm>
 #include <cstddef>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -140,8 +141,6 @@ class PolygonClipping {
 
             std::vector<Point> clip_vertexes;
 
-            startPoint.push_back(subject_list[subject_start_node].GetPoint());
-
             for (size_t i = subject_start_node, j = 0; j < subject_list.size(); i++, j++) {
                 size_t query_node_index = (i) % (subject_list.size());
                 Point point = subject_list[query_node_index].GetPoint();
@@ -179,7 +178,7 @@ class PolygonClipping {
             Line line1(v11, v12);
 
             std::vector<PointWithState> intersect_points;
-            std::vector<double> x_set;
+            std::set<double> x_set;
 
             for (size_t j = 0; j < minor_polygon_vertex_size; j++) {
                 Point v21 = minor_polygon->GetVertexs()->at((j) % minor_polygon_vertex_size);
@@ -189,8 +188,8 @@ class PolygonClipping {
                 std::optional<Point> intersect_y_ray_optional = line2.GetYRayIntersectPoint(v12.GetY());
 
                 if (intersect_y_ray_optional.has_value()) {
-                    if (std::find(x_set.begin(), x_set.end(), intersect_y_ray_optional->GetX()) == x_set.end()) {
-                        x_set.push_back(intersect_y_ray_optional->GetX());
+                    if (x_set.find(intersect_y_ray_optional->GetX()) == x_set.end()) {
+                        x_set.insert(intersect_y_ray_optional->GetX());
                     }
                 }
 
@@ -222,11 +221,11 @@ class PolygonClipping {
 
             if (i != major_polygon_vertex_size - 1) {
 
-                std::sort(x_set.begin(), x_set.end());
+                std::vector<double> x_vec = std::vector<double>(x_set.begin(), x_set.end());
 
-                x_set = minor_polygon->localminmax_x_set_optimization(x_set, v12.GetY());
+                x_vec = minor_polygon->localminmax_x_set_optimization(x_vec, v12.GetY());
 
-                bool in_polygon = DeterminePointInPolygonByXSet(x_set, v12.GetX());
+                bool in_polygon = DeterminePointInPolygonByXSet(x_vec, v12.GetX());
                 if (std::find(list.begin(), list.end(), PointWithState(v12, true)) == list.end()) {
                     list.push_back(PointWithState(v12, in_polygon));
                 }
