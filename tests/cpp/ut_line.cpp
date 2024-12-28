@@ -114,18 +114,18 @@ TEST(LINE_TEST, test_get_intersection_with_one_intersection_should_return_correc
     Line line1(Point(2, 3), Point(2, 6));
     Line line2(Point(0, 6), Point(5, 2));
 
-    std::optional<Point> intersect_point = line1.GetIntersectPoint(line2);
+    std::optional<std::vector<Point>> intersect_point = line1.GetIntersectPoint(line2);
 
     ASSERT_EQ(intersect_point.has_value(), true);
-    ASSERT_NEAR(intersect_point->GetX(), 2, 0.0001);
-    ASSERT_NEAR(intersect_point->GetY(), 4.4, 0.0001);
+    ASSERT_NEAR(intersect_point->at(0).GetX(), 2, 0.0001);
+    ASSERT_NEAR(intersect_point->at(0).GetY(), 4.4, 0.0001);
 }
 
 TEST(LINE_TEST, test_get_intersection_with_the_same_line_should_return_empty_optional) {
     Line line1(Point(2, 3), Point(2, 6));
     Line line2(Point(2, 3), Point(2, 6));
 
-    std::optional<Point> intersect_point = line1.GetIntersectPoint(line2);
+    std::optional<std::vector<Point>> intersect_point = line1.GetIntersectPoint(line2);
 
     ASSERT_EQ(intersect_point.has_value(), false);
 }
@@ -134,7 +134,25 @@ TEST(LINE_TEST, test_get_intersection_with_zero_intersection_should_return_empty
     Line line1(Point(2, 3), Point(2, 6));
     Line line2(Point(0, 1), Point(5, 2));
 
-    std::optional<Point> intersect_point = line1.GetIntersectPoint(line2);
+    std::optional<std::vector<Point>> intersect_point = line1.GetIntersectPoint(line2);
 
     ASSERT_EQ(intersect_point.has_value(), false);
+}
+
+TEST(LINE_TEST, test_get_y_ray_intersection_with_intersect_horizontal_line_should_return_two_point) {
+    Line line(Point(2, 4), Point(5, 4));
+
+    std::optional<std::pair<Point, Point>> horizontalLineIntersectPoints = line.GetYRayHorizontalLineIntersectPoint(4);
+
+    std::pair<Point, Point> expectedPair = std::pair<Point, Point>(Point(2, 4), Point(5, 4));
+    ASSERT_TRUE(horizontalLineIntersectPoints.has_value());
+    ASSERT_EQ(horizontalLineIntersectPoints, expectedPair);
+}
+
+TEST(LINE_TEST, test_get_y_ray_intersection_with_non_intersect_horizontal_line_should_return_two_point) {
+    Line line(Point(2, 4), Point(5, 4));
+
+    std::optional<std::pair<Point, Point>> horizontalLineIntersectPoints = line.GetYRayHorizontalLineIntersectPoint(5);
+
+    ASSERT_FALSE(horizontalLineIntersectPoints.has_value());
 }

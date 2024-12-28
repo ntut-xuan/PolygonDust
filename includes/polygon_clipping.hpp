@@ -5,6 +5,7 @@
 #include "point.hpp"
 #include "polygon.hpp"
 #include "shared.hpp"
+#include "vectorization_result.hpp"
 #include <algorithm>
 #include <cstddef>
 #include <iostream>
@@ -40,6 +41,7 @@ class PolygonClipping {
     std::shared_ptr<Polygon> clippingPolygon;
     std::vector<PointWithState> subject_list;
     std::vector<PointWithState> clipping_list;
+    std::map<Point, bool> is_point_used;
     std::map<Point, int> point_to_intersection_index;
 
     std::optional<int> GetIntersectionPointIndex(Point point) {
@@ -75,6 +77,7 @@ class PolygonClipping {
 
         for (size_t j = 0; j < clipping_list_size; j++) {
             int query_index = (clip_list_intersect_start_index + j + 1) % clipping_list_size;
+            is_point_used[clipping_list[query_index].GetPoint()] = true;
             clip_vertexes.push_back(clipping_list[query_index].GetPoint());
 
             std::optional<int> intersect_index = GetIntersectionPointIndex(clipping_list[query_index].GetPoint());
@@ -97,11 +100,19 @@ class PolygonClipping {
         }
     }
 
+    std::vector<Point> GetIntersectPoints() {
+        std::vector<Point> points;
+        for (auto intersect_point_pair : point_to_intersection_index) {
+            points.push_back(intersect_point_pair.first);
+        }
+        return points;
+    }
+
   public:
     PolygonClipping(std::shared_ptr<Polygon> subjectPolygon, std::shared_ptr<Polygon> clippingPolygon)
         : subjectPolygon(subjectPolygon), clippingPolygon(clippingPolygon) {}
 
-    Polygon Produce() {
+    VectorizationResult Produce() {
         CreateVertexList(subject_list, subjectPolygon, clippingPolygon);
         CreateVertexList(clipping_list, clippingPolygon, subjectPolygon);
 
@@ -110,47 +121,55 @@ class PolygonClipping {
             std::reverse(clipping_list.begin(), clipping_list.end());
         }
 
-        std::vector<Point> clip_vertexes;
+        std::vector<Polygon> polygons;
+        std::vector<Point> startPoint;
 
-        int subject_start_node = 0;
+        while (true) {
+            int subject_start_node = -1;
 
-        for (size_t i = 0; i < subject_list.size(); i++) {
-            Point point = subject_list[i].GetPoint();
-            if (!(Between<double>(point.GetX(), clippingPolygon->GetMinX(), clippingPolygon->GetMaxX()) &&
-                  Between<double>(point.GetY(), clippingPolygon->GetMinY(), clippingPolygon->GetMaxY()))) {
-                subject_start_node = i;
+            for (size_t i = 0; i < subject_list.size(); i++) {
+                if (is_point_used[subject_list.at(i).GetPoint()] == false && !subject_list.at(i).IsInPolygon()) {
+                    subject_start_node = i;
+                    break;
+                }
+            }
+
+            if (subject_start_node == -1) {
                 break;
             }
-        }
 
-        for (size_t i = subject_start_node, j = 0; j < subject_list.size(); i++, j++) {
-            size_t query_node_index = (i) % (subject_list.size());
-            clip_vertexes.push_back(subject_list[query_node_index].GetPoint());
+            std::vector<Point> clip_vertexes;
 
-            std::optional<int> subject_intersect_index =
-                GetIntersectionPointIndex(subject_list[query_node_index].GetPoint());
+            startPoint.push_back(subject_list[subject_start_node].GetPoint());
 
-            if (subject_intersect_index.has_value()) {
-                ProcessIntersectPoint(clip_vertexes, i);
+            for (size_t i = subject_start_node, j = 0; j < subject_list.size(); i++, j++) {
+                size_t query_node_index = (i) % (subject_list.size());
+                Point point = subject_list[query_node_index].GetPoint();
+
+                if (clip_vertexes.size() != 0 && point == subject_list[subject_start_node].GetPoint()) {
+                    break;
+                }
+
+                is_point_used[point] = true;
+                clip_vertexes.push_back(point);
+
+                std::optional<int> subject_intersect_index = GetIntersectionPointIndex(point);
+
+                if (subject_intersect_index.has_value()) {
+                    ProcessIntersectPoint(clip_vertexes, i);
+                }
             }
+
+            polygons.push_back(Polygon(clip_vertexes));
         }
 
-        int duplicate_index = clip_vertexes.size();
-
-        for (size_t i = 1; i < clip_vertexes.size(); i++) {
-            if (clip_vertexes[0] == clip_vertexes[i]) {
-                duplicate_index = i;
-                break;
-            }
-        }
-
-        return Polygon(std::vector<Point>(clip_vertexes.begin(), clip_vertexes.begin() + duplicate_index));
+        return VectorizationResult(polygons, startPoint);
     }
 
     void CreateVertexList(std::vector<PointWithState> &list, std::shared_ptr<Polygon> major_polygon,
                           std::shared_ptr<Polygon> minor_polygon) {
         Point first_major_point = major_polygon->GetVertexs()->at(0);
-        list.push_back(PointWithState(first_major_point, major_polygon->IsPointInPolygon(first_major_point)));
+        list.push_back(PointWithState(first_major_point, minor_polygon->IsPointInPolygon(first_major_point)));
 
         size_t major_polygon_vertex_size = major_polygon->GetVertexs()->size();
         size_t minor_polygon_vertex_size = minor_polygon->GetVertexs()->size();
@@ -173,19 +192,19 @@ class PolygonClipping {
                     if (std::find(x_set.begin(), x_set.end(), intersect_y_ray_optional->GetX()) == x_set.end()) {
                         x_set.push_back(intersect_y_ray_optional->GetX());
                     }
-                    if ((std::find(x_set.begin(), x_set.end(), intersect_y_ray_optional->GetX()) != x_set.end()) &&
-                        minor_polygon->IsLocalMinMaxPoint(intersect_y_ray_optional.value())) {
-                        x_set.push_back(intersect_y_ray_optional->GetX());
-                    }
                 }
 
-                std::optional<Point> intersect_point_optional = line1.GetIntersectPoint(line2);
+                std::optional<std::vector<Point>> intersect_point_optional = line1.GetIntersectPoint(line2);
 
                 if (intersect_point_optional.has_value()) {
-                    Point intersect_point = intersect_point_optional.value();
-                    intersect_points.push_back(PointWithState(intersect_point, true));
-                    if (point_to_intersection_index.find(intersect_point) == point_to_intersection_index.end()) {
-                        point_to_intersection_index[intersect_point] = point_to_intersection_index.size();
+                    for (Point intersect_point : intersect_point_optional.value()) {
+                        if (std::find(intersect_points.begin(), intersect_points.end(),
+                                      PointWithState(intersect_point, true)) == intersect_points.end()) {
+                            intersect_points.push_back(PointWithState(intersect_point, true));
+                        }
+                        if (point_to_intersection_index.find(intersect_point) == point_to_intersection_index.end()) {
+                            point_to_intersection_index[intersect_point] = point_to_intersection_index.size();
+                        }
                     }
                 }
             }
@@ -196,12 +215,21 @@ class PolygonClipping {
                       });
 
             for (PointWithState p : intersect_points) {
-                list.push_back(p);
+                if (std::find(list.begin(), list.end(), p) == list.end()) {
+                    list.push_back(p);
+                }
             }
 
             if (i != major_polygon_vertex_size - 1) {
+
+                std::sort(x_set.begin(), x_set.end());
+
+                x_set = minor_polygon->localminmax_x_set_optimization(x_set, v12.GetY());
+
                 bool in_polygon = DeterminePointInPolygonByXSet(x_set, v12.GetX());
-                list.push_back(PointWithState(v12, in_polygon));
+                if (std::find(list.begin(), list.end(), PointWithState(v12, true)) == list.end()) {
+                    list.push_back(PointWithState(v12, in_polygon));
+                }
             }
         }
     }

@@ -28,6 +28,34 @@ std::shared_ptr<std::vector<Point>> Polygon::GetLocalMinMaxVertexs() {
     return std::make_shared<std::vector<Point>>(localminmaxs->begin(), localminmaxs->end());
 }
 
+std::vector<double> Polygon::localminmax_x_set_optimization(std::vector<double> x_set, double y) {
+
+    if (x_set.size() == 0) {
+        return x_set;
+    }
+
+    std::vector<double> minmax_fix_x_set;
+
+    for (size_t i = 0; i < x_set.size(); i++) {
+        if ((i != x_set.size() - 1) && IsHorizontalLine(Line(Point(x_set[i], y), Point(x_set[i + 1], y))) &&
+            !IsHorizontalMinMaxLine(Line(Point(x_set[i], y), Point(x_set[i + 1], y)))) {
+            minmax_fix_x_set.push_back(x_set[i + 1]);
+            i += 1;
+        } else if ((i != x_set.size() - 1) && IsHorizontalLine(Line(Point(x_set[i], y), Point(x_set[i + 1], y)))) {
+            minmax_fix_x_set.push_back(x_set[i]);
+            minmax_fix_x_set.push_back(x_set[i + 1]);
+            i += 1;
+        } else if (IsLocalMinMaxPoint(Point(x_set[i], y))) {
+            minmax_fix_x_set.push_back(x_set[i]);
+            minmax_fix_x_set.push_back(x_set[i]);
+        } else {
+            minmax_fix_x_set.push_back(x_set[i]);
+        }
+    }
+
+    return minmax_fix_x_set;
+}
+
 bool Polygon::IsLocalMinMaxPoint(Point point) { return localminmaxs->find(point) != localminmaxs->end(); }
 
 bool Polygon::IsPointInPolygon(Point point) {
@@ -48,10 +76,11 @@ bool Polygon::IsPointInPolygon(Point point) {
         if (std::find(x_set.begin(), x_set.end(), intersect_point->GetX()) == x_set.end()) {
             x_set.push_back(intersect_point->GetX());
         }
-        if ((std::find(x_set.begin(), x_set.end(), intersect_point->GetX()) != x_set.end()) &&
-            this->IsLocalMinMaxPoint(intersect_point.value())) {
-            x_set.push_back(intersect_point->GetX());
-        }
     }
+
+    std::sort(x_set.begin(), x_set.end());
+
+    x_set = localminmax_x_set_optimization(x_set, y);
+
     return DeterminePointInPolygonByXSet(x_set, x);
 }

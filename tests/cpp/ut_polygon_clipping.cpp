@@ -41,3 +41,19 @@ TEST(POLYGON_CLIPPING_TEST,
                                            PointWithState(Point(3, 1), true), PointWithState(Point(3, 2), true),
                                            PointWithState(Point(4, 2), true), PointWithState(Point(5, 2), false)}));
 }
+
+TEST(POLYGON_CLIPPING_TEST, test_create_vertex_list_with_overlap_line_should_return_correct_vertex_list) {
+    Polygon polygon1({Point(0, 5), Point(2, 5), Point(2, 3), Point(0, 3)});
+    Polygon polygon2({Point(1, 5), Point(3, 5), Point(3, 3), Point(1, 3)});
+    std::shared_ptr<Polygon> polygon_ptr1 = std::make_shared<Polygon>(polygon1);
+    std::shared_ptr<Polygon> polygon_ptr2 = std::make_shared<Polygon>(polygon2);
+    PolygonClipping polygon_clipping(polygon_ptr1, polygon_ptr2);
+    std::vector<PointWithState> points;
+
+    polygon_clipping.CreateVertexList(points, polygon_ptr1, polygon_ptr2);
+
+    ASSERT_EQ(points,
+              std::vector<PointWithState>({PointWithState(Point(0, 5), false), PointWithState(Point(1, 5), true),
+                                           PointWithState(Point(2, 5), true), PointWithState(Point(2, 3), true),
+                                           PointWithState(Point(1, 3), true), PointWithState(Point(0, 3), false)}));
+}

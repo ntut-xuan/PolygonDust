@@ -18,6 +18,8 @@ class Polygon {
     std::vector<Polygon> holes;
     std::shared_ptr<std::vector<Line>> lines;
     std::shared_ptr<std::set<Point>> localminmaxs;
+    std::vector<Line> localminmax_horizontal_lines;
+    std::vector<Line> horizontal_lines;
     bool clockwise;
     double min_x = INT_MAX, min_y = INT_MAX, max_x = INT_MIN, max_y = INT_MIN;
     void ConstructLocalMinMaxPoints() {
@@ -28,6 +30,26 @@ class Polygon {
             if (!(Between(middlePoint.GetY(), startPoint.GetY(), endPoint.GetY()) ||
                   Between(middlePoint.GetY(), endPoint.GetY(), startPoint.GetY()))) {
                 localminmaxs->insert(middlePoint);
+            }
+        }
+    }
+    void ConstructLocalMinMaxHorizontalLine() {
+        for (size_t i = 0; i < vertexs->size(); i++) {
+            Point p1 = vertexs->at(i);
+            Point p2 = vertexs->at((i + 1) % (vertexs->size()));
+            Point p3 = vertexs->at((i + 2) % (vertexs->size()));
+            Point p4 = vertexs->at((i + 3) % (vertexs->size()));
+            Line l1(p1, p2);
+            Line l2(p2, p3);
+            Line l3(p3, p4);
+
+            if (l2.IsHorizontalLine()) {
+                horizontal_lines.push_back(l2);
+            }
+
+            if (l2.IsHorizontalLine() && !((p1.GetY() <= p2.GetY() && p3.GetY() <= p4.GetY()) ||
+                                           (p1.GetY() >= p2.GetY() && p3.GetY() >= p4.GetY()))) {
+                localminmax_horizontal_lines.push_back(l2);
             }
         }
     }
@@ -66,6 +88,7 @@ class Polygon {
         }
         ConstructLines();
         ConstructLocalMinMaxPoints();
+        ConstructLocalMinMaxHorizontalLine();
         DetermineClockwise();
     }
     Polygon(std::vector<Point> outbound_vertexs, std::vector<Polygon> holes) : Polygon(outbound_vertexs) {
@@ -78,6 +101,7 @@ class Polygon {
     std::vector<Point> GetVertexsVector();
     std::shared_ptr<std::vector<Point>> GetLocalMinMaxVertexs();
     std::shared_ptr<std::vector<Line>> GetLines();
+    std::vector<double> localminmax_x_set_optimization(std::vector<double> x_set, double y);
     double GetArea();
     double GetMinX() { return min_x; }
     double GetMinY() { return min_y; }
@@ -86,5 +110,24 @@ class Polygon {
     bool IsLocalMinMaxPoint(Point point);
     bool IsClockwise() { return clockwise; }
     bool IsPointInPolygon(Point point);
+    bool IsVertexInPolygon(Point point);
+    bool IsHorizontalLine(Line line) {
+        for (Line horizontal_line : horizontal_lines) {
+            if (line.GetMinimalPoint() == horizontal_line.GetMinimalPoint() &&
+                line.GetMaximalPoint() == horizontal_line.GetMaximalPoint()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    bool IsHorizontalMinMaxLine(Line line) {
+        for (Line horizontal_line : localminmax_horizontal_lines) {
+            if (line.GetMinimalPoint() == horizontal_line.GetMinimalPoint() &&
+                line.GetMaximalPoint() == horizontal_line.GetMaximalPoint()) {
+                return true;
+            }
+        }
+        return false;
+    }
 };
 #endif
